@@ -403,16 +403,17 @@
     }
 
     function limpiarFormulario() {
-      document.getElementById("reo").value = "";
-      document.getElementById("espanol").value = "";
-      document.getElementById("categoria-select").value = "";
-      document.getElementById("categoria-nueva").value = "";
-      document.getElementById("categoria-nueva").classList.add("oculto");
-      document.getElementById("notas").value = "";
-      document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
-      editandoID = null;
-      clearMensajes();
-    }
+  document.getElementById("reo").value = "";
+  document.getElementById("espanol").value = "";
+  document.getElementById("categoria-select").value = "";
+  document.getElementById("categoria-nueva").value = "";
+  document.getElementById("categoria-nueva").classList.add("oculto");
+  document.getElementById("notas").value = "";
+  document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
+  editandoID = null;
+  // clearMensajes(); <-- ❌ NO aquí
+}
+
 
  let cuentaRegresivaTimeout;
 function mostrarEstado(mensaje) {

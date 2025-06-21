@@ -18,24 +18,20 @@
 </head>
 <body>
   <!-- HEADER STICKY -->
- <header id="barra-superior">
-  <div class="header-container">
-    <button id="menu-toggle">☰</button>
-    <h1>Diccionario Reo Tahiti - Español</h1>
-    <input type="text" id="buscador" placeholder="Buscar palabra..." />
-  </div>
-</header>
-
-
-  <nav id="menu" class="menu-desplegable oculto">
-  <button id="menu-toggle">☰</button>
-  <a href="#">Sobre Nosotros</a>
-  <a href="#">Contacto</a>
- </nav>
-
-
-    <input type="text" id="buscador" placeholder="Buscar palabra..." />
+  <header id="barra-superior">
+    <div class="header-container">
+      <button id="menu-toggle">☰</button>
+      <h1>Diccionario Reo Tahiti - Español</h1>
+      <input type="text" id="buscador" placeholder="Buscar palabra..." />
+    </div>
   </header>
+
+  <!-- MENÚ DESPLEGABLE -->
+  <nav id="menu" class="menu-desplegable">
+    <button id="menu-close">☰</button>
+    <a href="#">Sobre Nosotros</a>
+    <a href="#">Contacto</a>
+  </nav>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
@@ -48,25 +44,28 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const toggle = document.getElementById("menu-toggle");
+      const close = document.getElementById("menu-close");
       const menu = document.getElementById("menu");
 
       toggle.addEventListener("click", () => {
         menu.classList.toggle("activo");
       });
+
+      close.addEventListener("click", () => {
+        menu.classList.remove("activo");
+      });
     });
   </script>
 
   <script>
-  // Registro del Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/reo_es/service-worker.js')
-        .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
-        .catch(err => console.error("❌ Error al registrar Service Worker:", err));
-    });
-  }
-</script>
-
-  
+    // Registro del Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/reo_es/service-worker.js')
+          .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
+          .catch(err => console.error("❌ Error al registrar Service Worker:", err));
+      });
+    }
+  </script>
 </body>
 </html>

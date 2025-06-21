@@ -1,4 +1,12 @@
-/* Título principal */
+/* Fuente general y contenedor */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 1rem;
+  color: #333;
+}
+
 h1 {
   text-align: center;
   color: #00695c;
@@ -7,45 +15,110 @@ h1 {
 
 /* Buscador */
 #buscador {
+  display: block;
   width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
   padding: 0.75rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
 }
 
-/* Adaptaciones de estilo vertical tipo renglón */
+/* Lista contenedora */
+.lista-palabras {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Tarjeta */
+.tarjeta {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 1.2rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+.tarjeta:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Cabecera de la tarjeta */
+.cabecera {
+  padding: 16px;
+  background-color: #e0f2f1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Reo Tahiti */
 .reo-tahiti {
-  font-weight: bold;
   font-size: 1.4rem;
+  font-weight: bold;
   color: #0288d1;
   user-select: none;
   transition: color 0.3s ease;
-  width: 100%;
 }
-
 .reo-tahiti.activo {
   color: #01579b;
 }
 
+/* Español */
 .espanol {
-  margin-top: 0.3rem;
   font-size: 1rem;
   color: #333;
-  width: 100%;
 }
 
+/* Categoría */
 .categoria {
+  font-style: italic;
   font-size: 0.9rem;
   color: #555;
-  font-style: italic;
-  margin-top: 0.2rem;
-  width: 100%;
 }
 
-.notas {
-  font-size: 0.85rem;
-  color: #777;
-  margin-top: 0.5rem;
+/* Contenido oculto */
+.contenido-oculto {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  background-color: #fafafa;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Contenido visible */
+.contenido-oculto.visible {
+  max-height: 1000px;
+  padding: 12px 16px 16px 16px;
+}
+
+/* Imágenes */
+.imagen-palabra {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Enlaces */
+.contenido-oculto ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 1rem 0;
+}
+.contenido-oculto a {
+  color: #0288d1;
+  text-decoration: none;
+  transition: text-decoration 0.3s ease;
+}
+.contenido-oculto a:hover {
+  text-decoration: underline;
+}
+
+/* Párrafos generales */
+.contenido-oculto p {
+  margin: 0.4rem 0;
 }

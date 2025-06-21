@@ -1,8 +1,9 @@
 {
   "name": "Diccionario Reo Tahiti - Español",
   "short_name": "Diccionario Reo",
-  "start_url": "./diccionario2.html",
+  "start_url": "diccionario/index.html",
   "display": "standalone",
+  "scope": "./",
   "background_color": "#ffffff",
   "theme_color": "#00796b",
   "icons": [

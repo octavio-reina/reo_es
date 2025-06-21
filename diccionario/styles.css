@@ -77,9 +77,11 @@ header h1 {
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
-  text-align: left; /* evitar centrado de texto */
+  text-align: left;
   padding: 0 1rem;
+  min-height: 100px; /* evita que se "colapse" visualmente al filtrar */
 }
+
 
 /* Tarjetas */
 .tarjeta {

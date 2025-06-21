@@ -37,15 +37,15 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
-  <script>
-    // Toggle menú
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("menu-toggle");
-      const menu = document.getElementById("menu");
-      toggle.addEventListener("click", () => {
-        menu.classList.toggle("oculto");
-      });
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("menu-toggle");
+    const menu = document.getElementById("menu");
+
+    toggle.addEventListener("click", () => {
+      menu.classList.toggle("activo");
     });
-  </script>
+  });
+</script>
 </body>
 </html>

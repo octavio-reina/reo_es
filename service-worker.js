@@ -2,8 +2,8 @@ const CACHE_NAME = "diccionario-pwa-v2";
 
 const urlsToCache = [
   "/reo_es/diccionario/index.html",
-   "/reo_es/diccionario/contact.html",
-   "/reo_es/diccionario/about.html",
+  "/reo_es/diccionario/contact.html",
+  "/reo_es/diccionario/about.html",
   "/reo_es/diccionario/styles.css",
   "/reo_es/diccionario/script.js",
   "/reo_es/icon-256.png",
@@ -40,9 +40,8 @@ self.addEventListener("fetch", event => {
     caches.match(event.request)
       .then(response => response || fetch(event.request))
       .catch(() => {
-        // fallback si es navegación y falla
         if (event.request.mode === "navigate") {
-          return caches.match("/reo_es/index.html");
+          return caches.match("/reo_es/diccionario/index.html");
         }
       })
   );

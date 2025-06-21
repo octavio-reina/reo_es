@@ -55,15 +55,20 @@ header {
   gap: 1rem;
 }
 
+/* Título */
 header h1 {
   font-weight: 600;
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 3vw, 1.3rem); /* se ajusta según el ancho */
   user-select: none;
   flex: 1 1 auto;
-  min-width: 120px;
+  min-width: 0; /* permite que el título se contraiga más */
   text-align: center;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 #buscador {
   padding: 0.6rem;

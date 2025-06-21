@@ -45,15 +45,22 @@ function mostrarPalabras(lista) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta";
 
+    // Cabecera: reo tahiti en bold azul, español y categoría en itálicas
     const cabecera = document.createElement("div");
     cabecera.className = "cabecera";
-    cabecera.innerHTML = `<strong>${palabra["Reo Tahiti"]}</strong> — ${palabra["Español"]}`;
+
+    // Estructura interna cabecera
+    cabecera.innerHTML = `
+      <div class="reo">${palabra["Reo Tahiti"] || "-"}</div>
+      <div class="espanol">${palabra["Español"] || "-"}</div>
+      <div class="categoria">${palabra["Categoría"] ? palabra["Categoría"] : ""}</div>
+    `;
 
     const contenido = document.createElement("div");
     contenido.className = "contenido-oculto";
 
-    if (palabra["Categoría"]) {
-      contenido.innerHTML += `<p><strong>Categoría:</strong> ${palabra["Categoría"]}</p>`;
+    if (palabra["Notas"]) {
+      contenido.innerHTML += `<p><strong>Notas:</strong> ${palabra["Notas"]}</p>`;
     }
 
     if (palabra["Descripción"]) {
@@ -61,18 +68,19 @@ function mostrarPalabras(lista) {
     }
 
     if (palabra["Imagen"]) {
-      contenido.innerHTML += `<img src="${palabra["Imagen"]}" alt="Imagen relacionada" class="imagen-palabra" />`;
+      contenido.innerHTML += `<img src="${palabra["Imagen"]}" alt="Imagen de ${palabra["Reo Tahiti"]}" class="imagen-palabra" />`;
     }
 
     if (palabra["Enlaces"]) {
       const enlaces = palabra["Enlaces"].split(",").map(e => e.trim());
       contenido.innerHTML += `<p><strong>Referencias:</strong></p><ul>` +
-        enlaces.map(e => `<li><a href="${e}" target="_blank">${e}</a></li>`).join("") +
+        enlaces.map(e => `<li><a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a></li>`).join("") +
         `</ul>`;
     }
 
     cabecera.addEventListener("click", () => {
       contenido.classList.toggle("visible");
+      cabecera.querySelector(".reo").classList.toggle("activo");
     });
 
     tarjeta.appendChild(cabecera);
@@ -80,4 +88,3 @@ function mostrarPalabras(lista) {
     container.appendChild(tarjeta);
   });
 }
-

@@ -1,104 +1,51 @@
-/* Contenedor general */
-.lista-palabras {
-  max-width: 800px;
-  margin: 1rem auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+/* Título principal */
+h1 {
+  text-align: center;
+  color: #00695c;
+  margin-bottom: 1rem;
 }
 
-/* Tarjeta */
-.tarjeta {
+/* Buscador */
+#buscador {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
-  cursor: pointer;
-}
-.tarjeta:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-bottom: 1.5rem;
 }
 
-/* Cabecera */
-.cabecera {
-  padding: 12px 16px;
-  background-color: #e0f2f1; /* verde agua claro */
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px;
-}
-
-/* Reo Tahiti */
+/* Adaptaciones de estilo vertical tipo renglón */
 .reo-tahiti {
   font-weight: bold;
   font-size: 1.4rem;
-  color: #0288d1; /* azul base */
+  color: #0288d1;
   user-select: none;
   transition: color 0.3s ease;
+  width: 100%;
 }
 
-/* Reo Tahiti activo - más oscuro */
 .reo-tahiti.activo {
   color: #01579b;
 }
 
-/* Español */
 .espanol {
+  margin-top: 0.3rem;
   font-size: 1rem;
   color: #333;
+  width: 100%;
 }
 
-/* Categoría en itálicas y tamaño un poco más pequeño */
 .categoria {
-  font-style: italic;
   font-size: 0.9rem;
   color: #555;
+  font-style: italic;
+  margin-top: 0.2rem;
+  width: 100%;
 }
 
-/* Contenido oculto */
-.contenido-oculto {
-  max-height: 0;
-  overflow: hidden;
-  padding: 0 16px;
-  background-color: #fafafa;
-  transition: max-height 0.4s ease, padding 0.4s ease;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  color: #444;
-}
-
-/* Contenido visible */
-.contenido-oculto.visible {
-  max-height: 1000px; /* un valor alto para expandir */
-  padding: 12px 16px 16px 16px;
-}
-
-/* Imágenes dentro del contenido */
-.imagen-palabra {
-  max-width: 100%;
-  border-radius: 6px;
-  margin: 12px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* Enlaces en la lista */
-.contenido-oculto ul {
-  padding-left: 1.2rem;
-  margin: 0.4rem 0 1rem 0;
-}
-
-.contenido-oculto a {
-  color: #0288d1;
-  text-decoration: none;
-  transition: text-decoration 0.3s ease;
-}
-.contenido-oculto a:hover {
-  text-decoration: underline;
-}
-
-/* Notas y descripciones en párrafos */
-.contenido-oculto p {
-  margin: 0.4rem 0;
+.notas {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 0.5rem;
 }

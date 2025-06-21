@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modo Administrador - Diccionario</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -10,7 +10,7 @@
   <header>
     <h1>Panel de Administración</h1>
     <div id="seccion-login">
-      <input type="password" id="clave" placeholder="Clave de administrador" />
+      <input type="password" id="clave" placeholder="Clave de administrador" autocomplete="off" />
       <button id="btnEntrar">Entrar</button>
     </div>
   </header>
@@ -23,22 +23,22 @@
 
     <section id="agregar-palabra">
       <h2>Agregar nueva palabra</h2>
-      <form id="formulario">
-        <input type="text" name="reo" placeholder="Reo Tahiti" required />
-        <input type="text" name="espanol" placeholder="Español" required />
-        <input type="text" name="categoria" placeholder="Categoría" list="categorias" />
+      <form id="formAgregar" autocomplete="off">
+        <input type="text" id="reo" name="reo" placeholder="Reo Tahiti *" required />
+        <input type="text" id="espanol" name="espanol" placeholder="Español *" required />
+        <input type="text" id="categoria" name="categoria" placeholder="Categoría" list="categorias" />
         <datalist id="categorias"></datalist>
-        <textarea name="descripcion" placeholder="Descripción larga (opcional)"></textarea>
-        <input type="file" name="imagen" accept="image/png, image/jpeg" />
-        <input type="text" name="enlaces" placeholder="Enlaces de referencia (separados por coma)" />
+        <textarea id="descripcion" name="descripcion" placeholder="Descripción larga (opcional)" rows="3"></textarea>
+        <input type="file" id="imagen" name="imagen" accept="image/png, image/jpeg" />
+        <input type="text" id="enlaces" name="enlaces" placeholder="Enlaces de referencia (separados por coma)" />
         <button type="submit">Guardar palabra</button>
       </form>
     </section>
 
     <section id="editar-palabra" class="oculto">
       <h2>Editar o eliminar palabras</h2>
-      <input type="text" id="busqueda" placeholder="Buscar palabra..." />
-      <div id="tabla-palabras"></div>
+      <input type="text" id="buscador" placeholder="Buscar palabra..." autocomplete="off" />
+      <div id="tabla-palabras">Cargando palabras...</div>
     </section>
   </main>
 

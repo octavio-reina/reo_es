@@ -1,19 +1,19 @@
 {
   "name": "Diccionario Reo Tahiti - Español",
   "short_name": "Diccionario Reo",
-  "start_url": "/diccionario/index.html",
-  "scope": "/diccionario/",
+  "start_url": "/reo_es/diccionario/index.html",
+  "scope": "/reo_es/diccionario/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00796b",
   "icons": [
     {
-      "src": "icon-256.png",
+      "src": "/reo_es/icon-256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "/reo_es/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

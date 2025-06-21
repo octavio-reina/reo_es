@@ -6,12 +6,12 @@
   <title>Diccionario Reo Tahiti - Español</title>
 
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json" />
+ <link rel="manifest" href="/reo_es/manifest.json" />
   <meta name="theme-color" content="#00796b" />
 
   <!-- Íconos -->
-  <link rel="icon" href="/icon-256.png" sizes="256x256" />
-  <link rel="apple-touch-icon" href="/icon-512.png" />
+ <link rel="icon" href="/reo_es/icon-192.png" sizes="192x192" />
+ <link rel="apple-touch-icon" href="/reo_es/icon-512.png" />
 
   <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
@@ -35,7 +35,7 @@
   <!-- Registro del service worker -->
   <script>
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js")
+        navigator.serviceWorker.register("/reo_es/service-worker.js")
         .then(reg => console.log("✔️ Service Worker registrado", reg))
         .catch(err => console.error("❌ Error al registrar SW", err));
     }

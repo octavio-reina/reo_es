@@ -7,19 +7,22 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("buscador").addEventListener("input", filtrarPalabras);
 });
 
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("menu-toggle");
+      const close = document.getElementById("menu-close");
+      const menu = document.getElementById("menu");
+      const body = document.body;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const toggles = document.querySelectorAll("#menu-toggle");
-  const menu = document.getElementById("menu");
+      toggle.addEventListener("click", () => {
+        menu.classList.add("activo");
+        body.classList.add("menu-abierto");
+      });
 
-  toggles.forEach(toggle => {
-    toggle.addEventListener("click", () => {
-      menu.classList.toggle("activo");
-      document.body.classList.toggle("menu-abierto");
+      close.addEventListener("click", () => {
+        menu.classList.remove("activo");
+        body.classList.remove("menu-abierto");
+      });
     });
-  });
-});
-
 
 function cargarDatos() {
   Papa.parse(CSV_URL, {

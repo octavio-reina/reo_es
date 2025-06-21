@@ -42,20 +42,24 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("menu-toggle");
-      const close = document.getElementById("menu-close");
-      const menu = document.getElementById("menu");
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("menu-toggle");
+    const close = document.getElementById("menu-close");
+    const menu = document.getElementById("menu");
+    const body = document.body;
 
-      toggle.addEventListener("click", () => {
-        menu.classList.toggle("activo");
-      });
-
-      close.addEventListener("click", () => {
-        menu.classList.remove("activo");
-      });
+    toggle.addEventListener("click", () => {
+      menu.classList.add("activo");
+      body.classList.add("menu-abierto");
     });
-  </script>
+
+    close.addEventListener("click", () => {
+      menu.classList.remove("activo");
+      body.classList.remove("menu-abierto");
+    });
+  });
+</script>
+
 
   <script>
     // Registro del Service Worker

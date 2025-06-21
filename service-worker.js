@@ -2,6 +2,8 @@ const CACHE_NAME = "diccionario-pwa-v2";
 
 const urlsToCache = [
   "/reo_es/diccionario/index.html",
+   "/reo_es/diccionario/contact.html",
+   "/reo_es/diccionario/about.html",
   "/reo_es/diccionario/styles.css",
   "/reo_es/diccionario/script.js",
   "/reo_es/icon-256.png",

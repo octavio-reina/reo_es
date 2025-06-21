@@ -13,22 +13,24 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0 1rem 1rem;
+  padding: 1rem var(--body-padding-horizontal) 1rem;
 }
 
 /* HEADER sticky */
 header {
   background-color: #00796b;
   color: white;
-  padding: 1rem 1rem 0.8rem;
-  text-align: center;
+  padding: 1rem 0.8rem; /* sólo vertical y poco lateral */
   box-shadow: 0 3px 6px rgb(0 0 0 / 0.2);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1100;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: calc(-1 * var(--body-padding-horizontal, 1rem)); /* compensa padding body */
+  margin-right: calc(-1 * var(--body-padding-horizontal, 1rem));
 }
 
 /* Título */
@@ -169,18 +171,24 @@ header h1 {
 }
 
 #menu-toggle {
+  position: fixed;
+  top: 12px;
+  left: 12px;
   background: #00796b;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  width: 100%;
-  text-align: left;
-  user-select: none;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  z-index: 1200;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   transition: background-color 0.3s ease;
+  user-select: none;
+  font-size: 1rem;
+  line-height: 1.2;
+  width: auto;
+  min-width: 40px;
 }
 
 #menu-toggle:hover {
@@ -189,19 +197,22 @@ header h1 {
 
 /* Menú desplegable animado */
 .menu-desplegable {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px;
+  background: white;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+  padding: 2.5rem 1rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  background-color: white;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
-  margin-top: 0.2rem;
-  padding: 0 1rem;
+  gap: 1rem;
+  transform: translateX(-260px);
+  transition: transform 0.3s ease;
+  z-index: 1150;
   user-select: none;
+  overflow-y: auto;
 }
 
 .menu-desplegable a {
@@ -223,17 +234,29 @@ header h1 {
 
 /* Menú visible */
 .menu-desplegable.activo {
-  max-height: 300px;
-  opacity: 1;
+  transform: translateX(0);
 }
 
-/* Responsive */
+/* Ajuste del main para que no quede tapado si quieres */
+main {
+  max-width: 900px;
+  margin: auto;
+  width: 100%;
+  padding: 1rem 1.5rem 3rem;
+}
+
+/* Responsive: menú más estrecho en móviles */
 @media (max-width: 600px) {
-  header h1,
-  #buscador,
-  .menu-container {
-    max-width: 100%;
+  .menu-desplegable {
+    width: 200px;
+    padding-top: 2.2rem;
   }
+  /* Opcional para botón más pequeño */
+  #menu-toggle {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+  }
+}
 
   .lista-palabras {
     max-width: 100%;

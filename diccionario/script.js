@@ -11,7 +11,10 @@ if ('serviceWorker' in navigator) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  cargarDatos();
+ 
+  if (document.getElementById("resultados")) {
+    cargarDatos();
+  }
 
   // Filtro
   const buscador = document.getElementById("buscador");

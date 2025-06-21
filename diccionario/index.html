@@ -6,44 +6,62 @@
   <title>Diccionario Reo Tahiti - Español</title>
 
   <!-- PWA Manifest -->
- <link rel="manifest" href="/reo_es/manifest.json" />
+  <link rel="manifest" href="/reo_es/manifest.json" />
   <meta name="theme-color" content="#00796b" />
 
   <!-- Íconos -->
- <link rel="icon" href="/reo_es/icon-192.png" sizes="192x192" />
- <link rel="apple-touch-icon" href="/reo_es/icon-512.png" />
+  <link rel="icon" href="/reo_es/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/reo_es/icon-512.png" />
 
   <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- HEADER STICKY -->
   <header id="barra-superior">
-  <div class="top-header">
-    <button id="menu-toggle">☰</button>
-    <h1>Diccionario Reo Tahiti - Español</h1>
-  </div>
-  <nav id="menu" class="menu-desplegable oculto">
-    <a href="#">Sobre Nosotros</a>
-    <a href="#">Contacto</a>
-  </nav>
-  <input type="text" id="buscador" placeholder="Buscar palabra..." />
-</header>
+    <div class="top-header">
+      <button id="menu-toggle" aria-label="Abrir menú">☰</button>
+      <h1>Diccionario Reo Tahiti - Español</h1>
+    </div>
+
+    <nav id="menu" class="menu-desplegable">
+      <a href="#">Sobre Nosotros</a>
+      <a href="#">Contacto</a>
+    </nav>
+
+    <input type="text" id="buscador" placeholder="Buscar palabra..." />
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
   <main>
     <div id="resultados" class="lista-palabras"></div>
   </main>
 
-  <!-- Scripts -->
+  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("menu-toggle");
-    const menu = document.getElementById("menu");
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("menu");
 
-    toggle.addEventListener("click", () => {
-      menu.classList.toggle("activo");
+      toggle.addEventListener("click", () => {
+        menu.classList.toggle("activo");
+      });
     });
-  });
+  </script>
+
+  <script>
+  // Registro del Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/reo_es/service-worker.js')
+        .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
+        .catch(err => console.error("❌ Error al registrar Service Worker:", err));
+    });
+  }
 </script>
+
+  
 </body>
 </html>

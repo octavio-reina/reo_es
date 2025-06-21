@@ -122,3 +122,32 @@ h1 {
 .contenido-oculto p {
   margin: 0.4rem 0;
 }
+
+
+/* Menú desplegable animado */
+.menu-desplegable {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.menu-desplegable a {
+  color: #0288d1;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 4px 0;
+}
+.menu-desplegable a:hover {
+  text-decoration: underline;
+}
+
+/* Menú visible con animación */
+.menu-desplegable.activo {
+  max-height: 200px; /* puedes ajustar esto si hay más enlaces */
+  opacity: 1;
+}

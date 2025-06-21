@@ -7,6 +7,20 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("buscador").addEventListener("input", filtrarPalabras);
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggles = document.querySelectorAll("#menu-toggle");
+  const menu = document.getElementById("menu");
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      menu.classList.toggle("activo");
+      document.body.classList.toggle("menu-abierto");
+    });
+  });
+});
+
+
 function cargarDatos() {
   Papa.parse(CSV_URL, {
     download: true,

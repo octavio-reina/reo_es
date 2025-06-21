@@ -141,4 +141,171 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
   }
+
+  const tablaContenedor = document.getElementById("tabla-palabras");
+const buscador = document.getElementById("buscador");
+
+function cargarTablaPalabras() {
+  fetch(`${API_URL}?accion=leer`)
+    .then(res => res.json())
+    .then(data => {
+      palabrasGlobal = data; // guarda globalmente para filtro y edición
+      mostrarTabla(data);
+    });
+}
+
+function mostrarTabla(palabras) {
+  if (!palabras.length) {
+    tablaContenedor.innerHTML = "<p>No hay palabras.</p>";
+    return;
+  }
+
+  let html = `
+    <input type="text" id="buscador" placeholder="Buscar palabra...">
+    <table class="tabla-palabras">
+      <thead>
+        <tr>
+          <th>ID</th><th>Reo Tahiti</th><th>Español</th><th>Categoría</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  for (const p of palabras) {
+    html += `
+      <tr data-id="${p.id}">
+        <td>${p.id}</td>
+        <td>${p.reo}</td>
+        <td>${p.espanol}</td>
+        <td>${p.categoria}</td>
+        <td>
+          <button class="btn-editar">Editar</button>
+          <button class="btn-eliminar">Eliminar</button>
+        </td>
+      </tr>`;
+  }
+
+  html += "</tbody></table>";
+  tablaContenedor.innerHTML = html;
+
+  // Reasignar evento del buscador
+  const inputBuscar = document.getElementById("buscador");
+  inputBuscar.addEventListener("input", e => {
+    const filtro = e.target.value.toLowerCase();
+    const filtradas = palabrasGlobal.filter(p =>
+      p.reo.toLowerCase().includes(filtro) || p.espanol.toLowerCase().includes(filtro)
+    );
+    mostrarTabla(filtradas);
+  });
+
+  // Eventos botones
+  tablaContenedor.querySelectorAll(".btn-editar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.closest("tr").dataset.id;
+      abrirModalEdicion(id);
+    });
+  });
+
+  tablaContenedor.querySelectorAll(".btn-eliminar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.closest("tr").dataset.id;
+      if (confirm("¿Eliminar esta palabra?")) {
+        eliminarPalabra(id);
+      }
+    });
+  });
+}
+
+let palabrasGlobal = [];
+
+function abrirModalEdicion(id) {
+  const palabra = palabrasGlobal.find(p => p.id === id);
+  if (!palabra) return;
+
+  // Crear modal con formulario para editar
+  const modalHtml = `
+    <div class="modal-fondo">
+      <div class="modal-contenido">
+        <h3>Editar Palabra ID: ${palabra.id}</h3>
+        <form id="formEditar">
+          <label>Reo Tahiti:
+            <input name="reo" value="${palabra.reo}" required />
+          </label>
+          <label>Español:
+            <input name="espanol" value="${palabra.espanol}" required />
+          </label>
+          <label>Categoría:
+            <input name="categoria" value="${palabra.categoria || ''}" />
+          </label>
+          <label>Descripción:
+            <textarea name="descripcion">${palabra.descripcion || ''}</textarea>
+          </label>
+          <label>Enlaces:
+            <input name="enlaces" value="${palabra.enlaces || ''}" />
+          </label>
+          <button type="submit">Guardar</button>
+          <button type="button" id="btnCerrarModal">Cancelar</button>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+  // Cerrar modal
+  document.getElementById("btnCerrarModal").addEventListener("click", () => {
+    document.querySelector(".modal-fondo").remove();
+  });
+
+  // Guardar cambios
+  document.getElementById("formEditar").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updated = {
+      id: palabra.id,
+      reo: formData.get("reo").trim(),
+      espanol: formData.get("espanol").trim(),
+      categoria: formData.get("categoria").trim(),
+      descripcion: formData.get("descripcion").trim(),
+      enlaces: formData.get("enlaces").trim()
+    };
+
+    if (!updated.reo || !updated.espanol) {
+      mostrarNotificacion("Reo Tahiti y Español son obligatorios", "error");
+      return;
+    }
+
+    try {
+      const params = new URLSearchParams({ accion: "editar", ...updated });
+      const res = await fetch(`${API_URL}?${params.toString()}`);
+      const text = await res.text();
+      if (text.includes("OK")) {
+        mostrarNotificacion("✅ Palabra actualizada", "success");
+        cargarTablaPalabras();
+        document.querySelector(".modal-fondo").remove();
+      } else {
+        throw new Error(text);
+      }
+    } catch (err) {
+      mostrarNotificacion("Error al actualizar: " + err.message, "error");
+    }
+  });
+}
+
+async function eliminarPalabra(id) {
+  try {
+    const params = new URLSearchParams({ accion: "eliminar", id });
+    const res = await fetch(`${API_URL}?${params.toString()}`);
+    const text = await res.text();
+    if (text.includes("OK")) {
+      mostrarNotificacion("✅ Palabra eliminada", "success");
+      cargarTablaPalabras();
+    } else {
+      throw new Error(text);
+    }
+  } catch (err) {
+    mostrarNotificacion("Error al eliminar: " + err.message, "error");
+  }
+}
+
 });

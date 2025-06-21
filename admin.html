@@ -63,7 +63,7 @@
   </div>
 
   <script>
-    const CLAVE_SECRETA = "maitaimaitai"; // cambia esto si quieres
+    const CLAVE_SECRETA = "maitaimaitai"; // Cambia la clave aquí si lo deseas
 
     function verificarClave() {
       const ingresada = document.getElementById("codigo").value.trim();
@@ -76,37 +76,38 @@
     }
 
     function enviar() {
-      const reo = document.getElementById("reo").value.trim();
-      const espanol = document.getElementById("espanol").value.trim();
-      const categoria = document.getElementById("categoria").value.trim();
-      const notas = document.getElementById("notas").value.trim();
+      const reo = encodeURIComponent(document.getElementById("reo").value.trim());
+      const espanol = encodeURIComponent(document.getElementById("espanol").value.trim());
+      const categoria = encodeURIComponent(document.getElementById("categoria").value.trim());
+      const notas = encodeURIComponent(document.getElementById("notas").value.trim());
 
       if (!reo || !espanol) {
         document.getElementById("error").textContent = "Reo Tahiti y Español son obligatorios.";
         return;
       }
 
-      const payload = { reo, espanol, categoria, notas };
+      const url = `https://script.google.com/macros/s/AKfycbzfIe5IChI5y4EMKY7VaLrPCcphEmVrLHAaBX9gbqXUTUIUdblsvVwN2De9cDtTFFHa/exec?reo=${reo}&espanol=${espanol}&categoria=${categoria}&notas=${notas}`;
 
-      fetch("https://corsproxy.io/?https://script.google.com/macros/s/AKfycbydINVGz8VFeCO0fKKMwwa-DGgv_eChAr7EJN8t_YUKAu7a6mrF7QsGTCroUOWemj1v/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById("estado").textContent = "✅ Palabra agregada correctamente.";
-        document.getElementById("error").textContent = "";
-        document.getElementById("reo").value = "";
-        document.getElementById("espanol").value = "";
-        document.getElementById("categoria").value = "";
-        document.getElementById("notas").value = "";
-      })
-      .catch(err => {
-        document.getElementById("estado").textContent = "";
-        document.getElementById("error").textContent = "❌ Error al guardar la palabra.";
-        console.error(err);
-      });
+      fetch(url)
+        .then(res => res.text())
+        .then(data => {
+          if (data.trim() === "OK") {
+            document.getElementById("estado").textContent = "✅ Palabra agregada correctamente.";
+            document.getElementById("error").textContent = "";
+            document.getElementById("reo").value = "";
+            document.getElementById("espanol").value = "";
+            document.getElementById("categoria").value = "";
+            document.getElementById("notas").value = "";
+          } else {
+            document.getElementById("estado").textContent = "";
+            document.getElementById("error").textContent = "❌ Error del servidor: " + data;
+          }
+        })
+        .catch(err => {
+          document.getElementById("estado").textContent = "";
+          document.getElementById("error").textContent = "❌ Error al guardar la palabra.";
+          console.error(err);
+        });
     }
   </script>
 </body>

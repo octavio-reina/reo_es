@@ -5,98 +5,127 @@
   <title>Modo Admin – Diccionario</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 800px;
-      margin: auto;
-      padding: 1rem;
+  body {
+    font-family: sans-serif;
+    max-width: 100%;
+    margin: auto;
+    padding: 1rem;
+    background: #f9f9f9;
+  }
+  h1, h2 {
+    color: #00695c;
+    text-align: center;
+  }
+  input, textarea, select, button {
+    width: 100%;
+    padding: 0.9rem;
+    margin: 0.5rem 0;
+    font-size: 1.05rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background: #00796b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  button:active, button.active-click {
+    background-color: #004d40 !important;
+    transform: scale(0.98);
+    transition: transform 0.1s;
+  }
+  .oculto {
+    display: none;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .tab-btn {
+    background: #e0f2f1;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0.25rem;
+    border-radius: 6px 6px 0 0;
+    transition: background-color 0.25s ease;
+  }
+  .tab-btn.active {
+    background: #00796b;
+    color: white;
+  }
+  #estado {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    min-height: 1.5em;
+    margin-bottom: 0.5rem;
+  }
+  #error {
+    color: red;
+    text-align: center;
+    min-height: 1.5em;
+    margin-bottom: 0.5rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    vertical-align: middle;
+    font-size: 0.95rem;
+  }
+  th {
+    background: #e0f2f1;
+  }
+  .acciones button {
+    margin: 2px 4px;
+    padding: 0.4rem 0.6rem;
+    font-size: 1rem;
+    border-radius: 4px;
+  }
+  #busqueda {
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+      display: block;
     }
-    h1, h2 {
-      color: #00695c;
-      text-align: center;
-    }
-    input, textarea, select, button {
-      width: 100%;
-      padding: 0.7rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background: #00796b;
-      color: white;
-      border: none;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.15s ease;
-    }
-    button:active, button.active-click {
-      background-color: #004d40 !important;
-      transform: scale(0.98);
-      transition: transform 0.1s;
-    }
-    .oculto {
+    thead {
       display: none;
     }
-    nav {
-      display: flex;
-      justify-content: center;
+    tr {
       margin-bottom: 1rem;
-    }
-    .tab-btn {
-      background: #e0f2f1;
-      border: none;
-      padding: 0.7rem 1.5rem;
-      cursor: pointer;
-      font-weight: bold;
-      user-select: none;
-      margin: 0 0.25rem;
-      border-radius: 6px 6px 0 0;
-      transition: background-color 0.25s ease;
-    }
-    .tab-btn.active {
-      background: #00796b;
-      color: white;
-    }
-    #estado {
-      color: green;
-      font-weight: bold;
-      text-align: center;
-      min-height: 1.5em;
-      margin-bottom: 0.5rem;
-    }
-    #error {
-      color: red;
-      text-align: center;
-      min-height: 1.5em;
-      margin-bottom: 0.5rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    th, td {
-      border: 1px solid #ccc;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       padding: 0.5rem;
-      vertical-align: middle;
     }
-    th {
-      background: #e0f2f1;
+    td {
+      padding: 0.4rem;
+      border: none;
+      border-bottom: 1px solid #eee;
     }
-    .acciones button {
-      margin: 2px 4px;
-      padding: 0.3rem 0.6rem;
-      font-size: 1rem;
-      border-radius: 4px;
+    td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      display: block;
+      color: #00796b;
     }
-    #busqueda {
-      margin-top: 0.5rem;
-      margin-bottom: 0.25rem;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <h1>Modo Administrador</h1>
@@ -385,23 +414,24 @@
       clearMensajes();
     }
 
-    let cuentaRegresivaTimeout;
-    function mostrarEstado(mensaje) {
-      clearMensajes();
-      const estado = document.getElementById("estado");
-      let segundos = 5;
-      estado.textContent = `${mensaje} (${segundos})`;
+ let cuentaRegresivaTimeout;
+function mostrarEstado(mensaje) {
+  const estado = document.getElementById("estado");
+  let segundos = 5;
+  estado.textContent = `${mensaje} (${segundos})`;
 
-      cuentaRegresivaTimeout = setInterval(() => {
-        segundos--;
-        if (segundos > 0) {
-          estado.textContent = `${mensaje} (${segundos})`;
-        } else {
-          clearInterval(cuentaRegresivaTimeout);
-          estado.textContent = "";
-        }
-      }, 1000);
+  clearInterval(cuentaRegresivaTimeout); // <- limpiar si ya había
+  cuentaRegresivaTimeout = setInterval(() => {
+    segundos--;
+    if (segundos > 0) {
+      estado.textContent = `${mensaje} (${segundos})`;
+    } else {
+      clearInterval(cuentaRegresivaTimeout);
+      estado.textContent = "";
     }
+  }, 1000);
+}
+
 
     function mostrarError(mensaje) {
       clearMensajes();

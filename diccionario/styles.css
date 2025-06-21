@@ -17,8 +17,10 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 1rem var(--body-padding-horizontal) 1rem;
+  margin: 0;
+  padding: 0; /* o usa padding controlado con --body-padding-horizontal */
 }
+
 
 /* HEADER sticky */
 header {
@@ -69,10 +71,12 @@ header h1 {
 /* Contenedor de tarjetas */
 .lista-palabras {
   max-width: 900px;
+  margin: 0 auto;
   width: 100%;
-  margin: auto;
-  padding: 0 0.5rem;
+  text-align: initial; /* <- evita que se centre el texto */
+  padding: 0 1rem;
 }
+
 
 /* Tarjetas */
 .tarjeta {
@@ -242,7 +246,11 @@ main {
   margin: auto;
   width: 100%;
   padding: 1rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* <- asegura layout en bloque */
 }
+
 
 /* Responsive */
 @media (max-width: 600px) {

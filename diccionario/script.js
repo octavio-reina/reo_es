@@ -42,46 +42,69 @@ function mostrarPalabras(lista) {
   }
 
   lista.forEach(palabra => {
-    const card = document.createElement("div");
-    card.className = "tarjeta";
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "tarjeta";
 
     const cabecera = document.createElement("div");
     cabecera.className = "cabecera";
-    cabecera.innerHTML = `
-      <div class="reo-tahiti">${palabra["Reo Tahiti"]}</div>
-      <div class="espanol">${palabra["Español"]}</div>
-      ${palabra["Categoría"] ? `<div class="categoria">${palabra["Categoría"]}</div>` : ""}
-    `;
+
+    const reoTahiti = document.createElement("div");
+    reoTahiti.className = "reo-tahiti";
+    reoTahiti.textContent = palabra["Reo Tahiti"];
+
+    const espanol = document.createElement("div");
+    espanol.className = "espanol";
+    espanol.textContent = palabra["Español"];
+
+    cabecera.appendChild(reoTahiti);
+    cabecera.appendChild(espanol);
+
+    if (palabra["Categoría"]) {
+      const categoria = document.createElement("div");
+      categoria.className = "categoria";
+      categoria.textContent = palabra["Categoría"];
+      cabecera.appendChild(categoria);
+    }
 
     const contenido = document.createElement("div");
     contenido.className = "contenido-oculto";
 
     if (palabra["Notas"]) {
-      contenido.innerHTML += `<div class="notas">${palabra["Notas"]}</div>`;
+      const notas = document.createElement("p");
+      notas.innerHTML = `<strong>Notas:</strong> ${palabra["Notas"]}`;
+      contenido.appendChild(notas);
     }
 
     if (palabra["Descripción"]) {
-      contenido.innerHTML += `<p><strong>Descripción:</strong> ${palabra["Descripción"]}</p>`;
+      const descripcion = document.createElement("p");
+      descripcion.innerHTML = `<strong>Descripción:</strong> ${palabra["Descripción"]}`;
+      contenido.appendChild(descripcion);
     }
 
     if (palabra["Imagen"]) {
-      contenido.innerHTML += `<img src="${palabra["Imagen"]}" alt="Imagen relacionada" class="imagen-palabra" />`;
+      const img = document.createElement("img");
+      img.src = palabra["Imagen"];
+      img.className = "imagen-palabra";
+      contenido.appendChild(img);
     }
 
     if (palabra["Enlaces"]) {
-      const enlaces = palabra["Enlaces"].split(",").map(e => e.trim());
-      contenido.innerHTML += `<p><strong>Referencias:</strong></p><ul>` +
-        enlaces.map(e => `<li><a href="${e}" target="_blank">${e}</a></li>`).join("") +
-        `</ul>`;
+      const links = palabra["Enlaces"].split(",").map(e => e.trim());
+      const lista = document.createElement("ul");
+      lista.innerHTML = links.map(e => `<li><a href="${e}" target="_blank">${e}</a></li>`).join("");
+      const titulo = document.createElement("p");
+      titulo.innerHTML = "<strong>Referencias:</strong>";
+      contenido.appendChild(titulo);
+      contenido.appendChild(lista);
     }
 
     cabecera.addEventListener("click", () => {
       contenido.classList.toggle("visible");
-      cabecera.querySelector(".reo-tahiti").classList.toggle("activo");
+      reoTahiti.classList.toggle("activo");
     });
 
-    card.appendChild(cabecera);
-    card.appendChild(contenido);
-    container.appendChild(card);
+    tarjeta.appendChild(cabecera);
+    tarjeta.appendChild(contenido);
+    container.appendChild(tarjeta);
   });
 }

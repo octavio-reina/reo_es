@@ -13,6 +13,10 @@ function cargarDatos() {
     header: true,
     complete: function(results) {
       palabras = results.data;
+
+      // Ordenar alfabéticamente antes de mostrar
+      ordenarAlfabeticamente(palabras);
+
       mostrarPalabras(palabras);
     },
     error: function(err) {
@@ -20,6 +24,17 @@ function cargarDatos() {
     }
   });
 }
+
+function ordenarAlfabeticamente(lista) {
+  lista.sort((a, b) => {
+    const strA = (a["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const strB = (b["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    // Usar localeCompare con sensibilidad base para ignorar acentos y diacríticos
+    return strA.localeCompare(strB, 'es', { sensitivity: 'base' });
+  });
+}
+
 
 function filtrarPalabras() {
   const query = document.getElementById("buscador").value.toLowerCase();

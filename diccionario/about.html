@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sobre la app - Diccionario Reo Tahiti</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/reo_es/manifest.json" />
+  <meta name="theme-color" content="#00796b" />
+
+  <!-- Íconos -->
+  <link rel="icon" href="/reo_es/icon-256.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/reo_es/icon-512.png" />
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,12 +21,11 @@
     <div class="header-container">
       <button id="menu-toggle">☰</button>
       <h1>Diccionario Reo Tahiti - Español</h1>
-      <input type="text" id="buscador" placeholder="Buscar palabra..." style="display:none" />
     </div>
   </header>
 
-  <nav id="menu" class="menu-desplegable oculto">
-    <button id="menu-toggle">✕</button>
+  <nav id="menu" class="menu-desplegable">
+    <button id="menu-close">✕</button>
     <a href="index.html">Diccionario</a>
     <a href="about.html" aria-current="page">Sobre la app</a>
     <a href="contact.html">Contacto</a>
@@ -25,11 +34,12 @@
   <main>
     <section>
       <h2>Sobre la app</h2>
-      <p>Esta aplicación es un diccionario interactivo de Reo Tahiti al Español, con funcionalidades para facilitar el aprendizaje del idioma.</p>
-      <p>Ofrecemos servicios de traducción y clases personalizadas de Reo Tahiti para todos los niveles.</p>
+      <p>Esta aplicación es un diccionario interactivo de Reo Tahiti al Español, diseñado para facilitar el aprendizaje y la preservación del idioma.</p>
+      <p>Además del diccionario, ofrecemos servicios de <strong>traducción profesional</strong> y <strong>clases personalizadas</strong> de Reo Tahiti para todos los niveles.</p>
     </section>
   </main>
 
+  <!-- Script principal -->
   <script src="script.js"></script>
 </body>
 </html>

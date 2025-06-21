@@ -7,15 +7,15 @@
   <style>
     body {
       font-family: sans-serif;
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       padding: 1rem;
     }
-    h1 {
+    h1, h2 {
       color: #00695c;
       text-align: center;
     }
-    input, textarea, button {
+    input, textarea, button, select {
       width: 100%;
       padding: 0.7rem;
       margin: 0.5rem 0;
@@ -32,17 +32,29 @@
     .oculto {
       display: none;
     }
-    #estado {
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      color: green;
+    #estado { color: green; }
+    #error { color: red; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
     }
-    #error {
-      color: red;
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+    }
+    th {
+      background: #e0f2f1;
+    }
+    .acciones button {
+      margin: 2px;
+      padding: 0.4rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
+
   <h1>Modo Administrador</h1>
 
   <div id="clave">
@@ -52,30 +64,81 @@
   </div>
 
   <div id="formulario" class="oculto">
-    <h2>Agregar nueva palabra</h2>
+    <h2 id="titulo-form">Agregar nueva palabra</h2>
     <input type="text" id="reo" placeholder="Reo Tahiti">
     <input type="text" id="espanol" placeholder="Español">
     <input type="text" id="categoria" placeholder="Categoría">
     <textarea id="notas" placeholder="Notas"></textarea>
-    <button onclick="enviar()">Guardar palabra</button>
+    <button onclick="guardar()">Guardar</button>
     <p id="estado"></p>
     <p id="error"></p>
+
+    <h2>Palabras existentes</h2>
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Reo Tahiti</th>
+          <th>Español</th>
+          <th>Categoría</th>
+          <th>Notas</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
-    const CLAVE_SECRETA = "maitaimaitai"; // Cambia la clave aquí si lo deseas
+    const CLAVE_SECRETA = "maitaimaitai";
+    const URL_BASE = "https://script.google.com/macros/s/AKfycbxGcYIBCm5L_Xrq-pmVESD8zPhi27h_SpMXAbK-0hHqyyXuyNSD9Bp3RgOKH7hFeEGs/exec";
+    let editandoID = null;
 
     function verificarClave() {
       const ingresada = document.getElementById("codigo").value.trim();
       if (ingresada === CLAVE_SECRETA) {
         document.getElementById("clave").style.display = "none";
         document.getElementById("formulario").classList.remove("oculto");
+        cargarTabla();
       } else {
         alert("Clave incorrecta.");
       }
     }
 
-    function enviar() {
+    function cargarTabla() {
+      fetch(URL_BASE + "?accion=leer")
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector("#tabla tbody");
+          tbody.innerHTML = "";
+          data.forEach(palabra => {
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+              <td>${palabra.id}</td>
+              <td>${palabra.reo}</td>
+              <td>${palabra.espanol}</td>
+              <td>${palabra.categoria}</td>
+              <td>${palabra.notas}</td>
+              <td class="acciones">
+                <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
+                <button onclick='eliminar(${palabra.id})'>🗑️</button>
+              </td>
+            `;
+            tbody.appendChild(fila);
+          });
+        });
+    }
+
+    function editar(palabra) {
+      document.getElementById("reo").value = palabra.reo;
+      document.getElementById("espanol").value = palabra.espanol;
+      document.getElementById("categoria").value = palabra.categoria;
+      document.getElementById("notas").value = palabra.notas;
+      editandoID = palabra.id;
+      document.getElementById("titulo-form").textContent = `Editando palabra ID ${palabra.id}`;
+    }
+
+    function guardar() {
       const reo = encodeURIComponent(document.getElementById("reo").value.trim());
       const espanol = encodeURIComponent(document.getElementById("espanol").value.trim());
       const categoria = encodeURIComponent(document.getElementById("categoria").value.trim());
@@ -86,18 +149,25 @@
         return;
       }
 
-      const url = `https://script.google.com/macros/s/AKfycbxGcYIBCm5L_Xrq-pmVESD8zPhi27h_SpMXAbK-0hHqyyXuyNSD9Bp3RgOKH7hFeEGs/exec?reo=${reo}&espanol=${espanol}&categoria=${categoria}&notas=${notas}`;
+      const accion = editandoID ? "editar" : "";
+      let url = `${URL_BASE}?reo=${reo}&espanol=${espanol}&categoria=${categoria}&notas=${notas}`;
+      if (editandoID) {
+        url += `&accion=editar&id=${editandoID}`;
+      }
 
       fetch(url)
         .then(res => res.text())
         .then(data => {
           if (data.trim() === "OK") {
-            document.getElementById("estado").textContent = "✅ Palabra agregada correctamente.";
+            document.getElementById("estado").textContent = editandoID ? "✅ Palabra actualizada." : "✅ Palabra agregada.";
             document.getElementById("error").textContent = "";
             document.getElementById("reo").value = "";
             document.getElementById("espanol").value = "";
             document.getElementById("categoria").value = "";
             document.getElementById("notas").value = "";
+            document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
+            editandoID = null;
+            cargarTabla();
           } else {
             document.getElementById("estado").textContent = "";
             document.getElementById("error").textContent = "❌ Error del servidor: " + data;
@@ -105,8 +175,22 @@
         })
         .catch(err => {
           document.getElementById("estado").textContent = "";
-          document.getElementById("error").textContent = "❌ Error al guardar la palabra.";
+          document.getElementById("error").textContent = "❌ Error al guardar.";
           console.error(err);
+        });
+    }
+
+    function eliminar(id) {
+      if (!confirm("¿Eliminar esta palabra?")) return;
+
+      fetch(`${URL_BASE}?accion=eliminar&id=${id}`)
+        .then(res => res.text())
+        .then(data => {
+          if (data.trim() === "OK") {
+            cargarTabla();
+          } else {
+            alert("Error al eliminar: " + data);
+          }
         });
     }
   </script>

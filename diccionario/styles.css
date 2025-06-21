@@ -33,8 +33,9 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: calc(-1 * var(--body-padding-horizontal));
-  margin-right: calc(-1 * var(--body-padding-horizontal));
+  margin-left: calc(-1 * var(--body-padding-horizontal, 1rem));
+  margin-right: calc(-1 * var(--body-padding-horizontal, 1rem));
+  min-height: 120px; /* <- asegúrate que el header tenga altura fija */
 }
 
 /* Título */

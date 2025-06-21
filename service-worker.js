@@ -1,4 +1,5 @@
-const CACHE_NAME = "diccionario-pwa-v1";
+const CACHE_NAME = "diccionario-pwa-v2";
+
 const urlsToCache = [
   "/reo_es/diccionario/index.html",
   "/reo_es/diccionario/styles.css",
@@ -8,36 +9,39 @@ const urlsToCache = [
   "/reo_es/manifest.json"
 ];
 
+// Instalación
 self.addEventListener("install", event => {
   console.log("Service Worker instalado");
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
+  self.skipWaiting(); // fuerza actualización inmediata
 });
 
+// Activación y limpieza de cachés antiguos
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      )
+    )
+  );
+  self.clients.claim(); // toma control inmediato
+});
+
+// Intercepción de peticiones
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-  );
-});
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys()
-      .then(cacheNames => {
-        return Promise.all(
-          cacheNames.map(cache => {
-            if (cache !== CACHE_NAME) {
-              return caches.delete(cache);
-            }
-          })
-        );
+      .then(response => response || fetch(event.request))
+      .catch(() => {
+        // fallback si es navegación y falla
+        if (event.request.mode === "navigate") {
+          return caches.match("/reo_es/index.html");
+        }
       })
   );
 });

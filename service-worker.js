@@ -1,11 +1,11 @@
 const CACHE_NAME = "diccionario-pwa-v1";
 const urlsToCache = [
-  "/diccionario/index.html",
-  "/diccionario/styles.css",
+  "/reo_es/diccionario/index.html",
+  "/reo_es/diccionario/styles.css",
   "/diccionario/script.js",
-  "/icon-192.png",
-  "/icon-512.png",
-  "/manifest.json"
+  "/reo_es/icon-256.png",
+  "/reo_es/icon-512.png",
+  "/reo_es/manifest.json"
 ];
 
 self.addEventListener("install", event => {

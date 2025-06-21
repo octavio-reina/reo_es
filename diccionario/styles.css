@@ -11,6 +11,10 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: #f5f5f5;
   color: #222;
@@ -18,9 +22,8 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
-  padding: 0; /* o usa padding controlado con --body-padding-horizontal */
+  padding: 0;  
 }
-
 
 /* HEADER sticky */
 header {
@@ -35,9 +38,10 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: calc(-1 * var(--body-padding-horizontal, 1rem));
-  margin-right: calc(-1 * var(--body-padding-horizontal, 1rem));
-  min-height: 120px; /* <- asegúrate que el header tenga altura fija */
+  /* Eliminamos márgenes negativos porque body no tiene padding horizontal */
+  margin-left: 0;
+  margin-right: 0;
+  min-height: 120px; /* altura fija para evitar saltos */
 }
 
 /* Título */
@@ -73,10 +77,9 @@ header h1 {
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
-  text-align: initial; /* <- evita que se centre el texto */
+  text-align: left; /* evitar centrado de texto */
   padding: 0 1rem;
 }
-
 
 /* Tarjetas */
 .tarjeta {
@@ -87,6 +90,7 @@ header h1 {
   cursor: pointer;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
+  text-align: left;
 }
 .tarjeta:hover {
   box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
@@ -181,7 +185,7 @@ header h1 {
 
 #menu-toggle {
   position: fixed;
-  top: 12px;
+  top: 1rem; /* alineado con padding-top del header */
   left: 12px;
   background: #00796b;
   color: white;
@@ -248,9 +252,8 @@ main {
   padding: 1rem 1.5rem 3rem;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* <- asegura layout en bloque */
+  align-items: stretch;
 }
-
 
 /* Responsive */
 @media (max-width: 600px) {

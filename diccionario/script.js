@@ -42,22 +42,22 @@ function mostrarPalabras(lista) {
   }
 
   lista.forEach(palabra => {
-    const tarjeta = document.createElement("div");
-    tarjeta.className = "tarjeta";
+    const card = document.createElement("div");
+    card.className = "tarjeta";
 
     const cabecera = document.createElement("div");
     cabecera.className = "cabecera";
     cabecera.innerHTML = `
-      <span class="reo-tahiti">${palabra["Reo Tahiti"]}</span>
-      <span class="espanol">${palabra["Español"]}</span>
-      ${palabra["Categoría"] ? `<span class="categoria">${palabra["Categoría"]}</span>` : ''}
+      <div class="reo-tahiti">${palabra["Reo Tahiti"]}</div>
+      <div class="espanol">${palabra["Español"]}</div>
+      ${palabra["Categoría"] ? `<div class="categoria">${palabra["Categoría"]}</div>` : ""}
     `;
 
     const contenido = document.createElement("div");
     contenido.className = "contenido-oculto";
 
     if (palabra["Notas"]) {
-      contenido.innerHTML += `<p><strong>Notas:</strong> ${palabra["Notas"]}</p>`;
+      contenido.innerHTML += `<div class="notas">${palabra["Notas"]}</div>`;
     }
 
     if (palabra["Descripción"]) {
@@ -71,18 +71,17 @@ function mostrarPalabras(lista) {
     if (palabra["Enlaces"]) {
       const enlaces = palabra["Enlaces"].split(",").map(e => e.trim());
       contenido.innerHTML += `<p><strong>Referencias:</strong></p><ul>` +
-        enlaces.map(e => `<li><a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a></li>`).join("") +
+        enlaces.map(e => `<li><a href="${e}" target="_blank">${e}</a></li>`).join("") +
         `</ul>`;
     }
 
     cabecera.addEventListener("click", () => {
       contenido.classList.toggle("visible");
-      const reoSpan = cabecera.querySelector(".reo-tahiti");
-      if (reoSpan) reoSpan.classList.toggle("activo");
+      cabecera.querySelector(".reo-tahiti").classList.toggle("activo");
     });
 
-    tarjeta.appendChild(cabecera);
-    tarjeta.appendChild(contenido);
-    container.appendChild(tarjeta);
+    card.appendChild(cabecera);
+    card.appendChild(contenido);
+    container.appendChild(card);
   });
 }

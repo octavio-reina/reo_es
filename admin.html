@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Modo Admin – Diccionario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #00695c;
+      text-align: center;
+    }
+    #login, #formulario {
+      display: none;
+    }
+    input, textarea, button, select {
+      width: 100%;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #00796b;
+      color: white;
+      border: none;
+    }
+    .oculto {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Modo Administrador</h1>
+
+  <div id="clave">
+    <p>Ingresa la clave secreta para continuar:</p>
+    <input type="password" id="codigo" placeholder="Clave secreta">
+    <button onclick="verificarClave()">Entrar</button>
+  </div>
+
+  <div id="formulario" class="oculto">
+    <h2>Agregar nueva palabra</h2>
+    <input type="text" id="reo" placeholder="Reo Tahiti">
+    <input type="text" id="espanol" placeholder="Español">
+    <input type="text" id="categoria" placeholder="Categoría">
+    <textarea id="notas" placeholder="Notas"></textarea>
+    <button onclick="enviar()">Guardar palabra</button>
+    <p id="estado"></p>
+  </div>
+
+  <script>
+    const CLAVE_SECRETA = "maitaimaitai"; // puedes cambiarla aquí
+
+    function verificarClave() {
+      const ingresada = document.getElementById("codigo").value.trim();
+      if (ingresada === CLAVE_SECRETA) {
+        document.getElementById("clave").style.display = "none";
+        document.getElementById("formulario").classList.remove("oculto");
+      } else {
+        alert("Clave incorrecta.");
+      }
+    }
+
+    function enviar() {
+      const reo = document.getElementById("reo").value;
+      const espanol = document.getElementById("espanol").value;
+      const categoria = document.getElementById("categoria").value;
+      const notas = document.getElementById("notas").value;
+
+      const payload = {
+        reo: reo,
+        espanol: espanol,
+        categoria: categoria,
+        notas: notas
+      };
+
+      fetch("URL_DEL_SCRIPT_WEBAPP", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById("estado").textContent = "Palabra agregada correctamente.";
+        document.getElementById("reo").value = "";
+        document.getElementById("espanol").value = "";
+        document.getElementById("categoria").value = "";
+        document.getElementById("notas").value = "";
+      })
+      .catch(err => {
+        document.getElementById("estado").textContent = "Error al guardar.";
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>

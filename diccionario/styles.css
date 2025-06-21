@@ -48,37 +48,40 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* <- evita salto de línea */
   max-width: 900px;
   width: 100%;
   padding: 0 1rem;
   gap: 1rem;
+  overflow: hidden;
 }
 
-/* Título */
+/* Título que se adapta y no rompe línea */
 header h1 {
   font-weight: 600;
-  font-size: clamp(1rem, 3vw, 1.3rem); /* se ajusta según el ancho */
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   user-select: none;
   flex: 1 1 auto;
-  min-width: 0; /* permite que el título se contraiga más */
-  text-align: center;
-  margin: 0;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
+  margin: 0;
 }
 
 
+/* Input más flexible */
 #buscador {
+  flex: 1 1 250px;
+  max-width: 300px;
+  min-width: 150px;
   padding: 0.6rem;
-  width: 100%;
-  max-width: 600px;
   font-size: 1rem;
   border-radius: 5px;
   border: 1.8px solid #ddd;
   transition: border-color 0.3s ease;
-  margin: 0.5rem auto 0.8rem;
+  margin: 0;
 }
 
 #buscador:focus {
@@ -257,6 +260,7 @@ main {
   padding: 1rem 1.5rem 3rem;
 }
 
+
 @media (max-width: 600px) {
   .header-container {
     flex-direction: column;
@@ -265,10 +269,14 @@ main {
 
   header h1 {
     text-align: center;
+    white-space: normal;
+    overflow: visible;
   }
 
-  #buscador {
+#buscador {
+    width: 100%;
     max-width: 100%;
+    margin-top: 0.5rem;
   }
 
   #menu-close {

@@ -32,7 +32,7 @@
     .oculto {
       display: none;
     }
-    #estado { color: green; }
+    #estado { color: green; font-weight: bold; }
     #error { color: red; }
     table {
       width: 100%;
@@ -159,14 +159,9 @@
         .then(res => res.text())
         .then(data => {
           if (data.trim() === "OK") {
-            document.getElementById("estado").textContent = editandoID ? "✅ Palabra actualizada." : "✅ Palabra agregada.";
+            document.getElementById("estado").textContent = editandoID ? "✅ Palabra actualizada correctamente." : "✅ Palabra agregada correctamente.";
             document.getElementById("error").textContent = "";
-            document.getElementById("reo").value = "";
-            document.getElementById("espanol").value = "";
-            document.getElementById("categoria").value = "";
-            document.getElementById("notas").value = "";
-            document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
-            editandoID = null;
+            limpiarFormulario();
             cargarTabla();
           } else {
             document.getElementById("estado").textContent = "";
@@ -187,11 +182,23 @@
         .then(res => res.text())
         .then(data => {
           if (data.trim() === "OK") {
+            document.getElementById("estado").textContent = "✅ Palabra eliminada correctamente.";
+            document.getElementById("error").textContent = "";
             cargarTabla();
           } else {
-            alert("Error al eliminar: " + data);
+            document.getElementById("estado").textContent = "";
+            document.getElementById("error").textContent = "❌ Error al eliminar: " + data;
           }
         });
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("reo").value = "";
+      document.getElementById("espanol").value = "";
+      document.getElementById("categoria").value = "";
+      document.getElementById("notas").value = "";
+      document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
+      editandoID = null;
     }
   </script>
 </body>

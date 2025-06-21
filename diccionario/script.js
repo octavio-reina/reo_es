@@ -128,9 +128,10 @@ function mostrarPalabras(lista) {
     }
 
     if (palabra["Descripción"]) {
-      const descripcion = document.createElement("p");
-      descripcion.innerHTML = `<strong>Descripción:</strong> ${palabra["Descripción"]}`;
-      contenido.appendChild(descripcion);
+     const descripcion = document.createElement("p");
+     const textoConSaltos = palabra["Descripción"].replace(/\n/g, "<br>");
+     descripcion.innerHTML = `<strong>Descripción:</strong> ${textoConSaltos}`;
+     contenido.appendChild(descripcion);
     }
 
     if (palabra["Imagen"]) {

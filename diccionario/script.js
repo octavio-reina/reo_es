@@ -2,6 +2,14 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4Tp
 
 let palabras = [];
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/reo_es/service-worker.js')
+      .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
+      .catch(err => console.error("❌ Error al registrar Service Worker:", err));
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarDatos();
 

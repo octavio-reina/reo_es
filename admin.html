@@ -15,10 +15,7 @@
       color: #00695c;
       text-align: center;
     }
-    #login, #formulario {
-      display: none;
-    }
-    input, textarea, button, select {
+    input, textarea, button {
       width: 100%;
       padding: 0.7rem;
       margin: 0.5rem 0;
@@ -30,9 +27,18 @@
       background: #00796b;
       color: white;
       border: none;
+      cursor: pointer;
     }
     .oculto {
       display: none;
+    }
+    #estado {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: green;
+    }
+    #error {
+      color: red;
     }
   </style>
 </head>
@@ -53,10 +59,11 @@
     <textarea id="notas" placeholder="Notas"></textarea>
     <button onclick="enviar()">Guardar palabra</button>
     <p id="estado"></p>
+    <p id="error"></p>
   </div>
 
   <script>
-    const CLAVE_SECRETA = "maitaimaitai"; // puedes cambiarla aquí
+    const CLAVE_SECRETA = "maitaimaitai"; // cambia esto si quieres
 
     function verificarClave() {
       const ingresada = document.getElementById("codigo").value.trim();
@@ -69,17 +76,17 @@
     }
 
     function enviar() {
-      const reo = document.getElementById("reo").value;
-      const espanol = document.getElementById("espanol").value;
-      const categoria = document.getElementById("categoria").value;
-      const notas = document.getElementById("notas").value;
+      const reo = document.getElementById("reo").value.trim();
+      const espanol = document.getElementById("espanol").value.trim();
+      const categoria = document.getElementById("categoria").value.trim();
+      const notas = document.getElementById("notas").value.trim();
 
-      const payload = {
-        reo: reo,
-        espanol: espanol,
-        categoria: categoria,
-        notas: notas
-      };
+      if (!reo || !espanol) {
+        document.getElementById("error").textContent = "Reo Tahiti y Español son obligatorios.";
+        return;
+      }
+
+      const payload = { reo, espanol, categoria, notas };
 
       fetch("URL_DEL_SCRIPT_WEBAPP", {
         method: "POST",
@@ -88,14 +95,16 @@
       })
       .then(res => res.text())
       .then(data => {
-        document.getElementById("estado").textContent = "Palabra agregada correctamente.";
+        document.getElementById("estado").textContent = "✅ Palabra agregada correctamente.";
+        document.getElementById("error").textContent = "";
         document.getElementById("reo").value = "";
         document.getElementById("espanol").value = "";
         document.getElementById("categoria").value = "";
         document.getElementById("notas").value = "";
       })
       .catch(err => {
-        document.getElementById("estado").textContent = "Error al guardar.";
+        document.getElementById("estado").textContent = "";
+        document.getElementById("error").textContent = "❌ Error al guardar la palabra.";
         console.error(err);
       });
     }

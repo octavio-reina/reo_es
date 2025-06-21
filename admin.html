@@ -88,7 +88,7 @@
 
       const payload = { reo, espanol, categoria, notas };
 
-      fetch("https://script.google.com/macros/s/AKfycbydINVGz8VFeCO0fKKMwwa-DGgv_eChAr7EJN8t_YUKAu7a6mrF7QsGTCroUOWemj1v/exec", {
+      fetch("https://corsproxy.io/?https://script.google.com/macros/s/AKfycbydINVGz8VFeCO0fKKMwwa-DGgv_eChAr7EJN8t_YUKAu7a6mrF7QsGTCroUOWemj1v/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

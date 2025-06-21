@@ -4,25 +4,32 @@ let palabras = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarDatos();
-  document.getElementById("buscador").addEventListener("input", filtrarPalabras);
-});
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggle = document.getElementById("menu-toggle");
-      const close = document.getElementById("menu-close");
-      const menu = document.getElementById("menu");
-      const body = document.body;
+  // Filtro
+  const buscador = document.getElementById("buscador");
+  if (buscador) {
+    buscador.addEventListener("input", filtrarPalabras);
+  }
 
-      toggle.addEventListener("click", () => {
-        menu.classList.add("activo");
-        body.classList.add("menu-abierto");
-      });
+  // Menú hamburguesa
+  const toggles = document.querySelectorAll("#menu-toggle");
+  const menu = document.getElementById("menu");
+  const close = document.getElementById("menu-close");
 
-      close.addEventListener("click", () => {
-        menu.classList.remove("activo");
-        body.classList.remove("menu-abierto");
-      });
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      menu.classList.add("activo");
+      document.body.classList.add("menu-abierto");
     });
+  });
+
+  if (close) {
+    close.addEventListener("click", () => {
+      menu.classList.remove("activo");
+      document.body.classList.remove("menu-abierto");
+    });
+  }
+});
 
 function cargarDatos() {
   Papa.parse(CSV_URL, {

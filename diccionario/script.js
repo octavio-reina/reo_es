@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buscador.addEventListener("input", filtrarPalabras);
   }
 
+  
   // Menú hamburguesa
   const toggles = document.querySelectorAll("#menu-toggle");
   const menu = document.getElementById("menu");

@@ -1,3 +1,7 @@
+:root {
+  --body-padding-horizontal: 1rem;
+}
+
 /* RESET BÁSICO */
 * {
   box-sizing: border-box;
@@ -20,7 +24,7 @@ body {
 header {
   background-color: #00796b;
   color: white;
-  padding: 1rem 0.8rem; /* sólo vertical y poco lateral */
+  padding: 1rem 0.8rem;
   box-shadow: 0 3px 6px rgb(0 0 0 / 0.2);
   position: sticky;
   top: 0;
@@ -29,8 +33,8 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: calc(-1 * var(--body-padding-horizontal, 1rem)); /* compensa padding body */
-  margin-right: calc(-1 * var(--body-padding-horizontal, 1rem));
+  margin-left: calc(-1 * var(--body-padding-horizontal));
+  margin-right: calc(-1 * var(--body-padding-horizontal));
 }
 
 /* Título */
@@ -61,11 +65,12 @@ header h1 {
   outline: none;
 }
 
-/* Contenedor principal con max width y centrado */
+/* Contenedor de tarjetas */
 .lista-palabras {
   max-width: 900px;
-  margin: auto;
   width: 100%;
+  margin: auto;
+  padding: 0 0.5rem;
 }
 
 /* Tarjetas */
@@ -99,7 +104,6 @@ header h1 {
   user-select: none;
   transition: color 0.3s ease;
 }
-
 .reo-tahiti.activo {
   color: #01579b;
 }
@@ -131,7 +135,7 @@ header h1 {
 
 /* Contenido visible */
 .contenido-oculto.visible {
-  max-height: 1000px; /* suficiente para desplegar */
+  max-height: 1000px;
   padding: 1rem 1.5rem 1.5rem;
 }
 
@@ -190,12 +194,11 @@ header h1 {
   width: auto;
   min-width: 40px;
 }
-
 #menu-toggle:hover {
   background-color: #004d40;
 }
 
-/* Menú desplegable animado */
+/* Menú desplegable */
 .menu-desplegable {
   position: fixed;
   top: 0;
@@ -214,7 +217,6 @@ header h1 {
   user-select: none;
   overflow-y: auto;
 }
-
 .menu-desplegable a {
   color: #00796b;
   text-decoration: none;
@@ -222,22 +224,18 @@ header h1 {
   padding: 0.6rem 0;
   border-bottom: 1px solid #eee;
 }
-
 .menu-desplegable a:last-child {
   border-bottom: none;
 }
-
 .menu-desplegable a:hover {
   text-decoration: underline;
   background-color: #e0f2f1;
 }
-
-/* Menú visible */
 .menu-desplegable.activo {
   transform: translateX(0);
 }
 
-/* Ajuste del main para que no quede tapado si quieres */
+/* Main */
 main {
   max-width: 900px;
   margin: auto;
@@ -245,21 +243,15 @@ main {
   padding: 1rem 1.5rem 3rem;
 }
 
-/* Responsive: menú más estrecho en móviles */
+/* Responsive */
 @media (max-width: 600px) {
   .menu-desplegable {
     width: 200px;
     padding-top: 2.2rem;
   }
-  /* Opcional para botón más pequeño */
+
   #menu-toggle {
     padding: 0.3rem 0.6rem;
     font-size: 0.9rem;
-  }
-}
-
-  .lista-palabras {
-    max-width: 100%;
-    padding: 0 0.5rem;
   }
 }

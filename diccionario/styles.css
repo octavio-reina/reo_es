@@ -1,117 +1,104 @@
-/* Reset general */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #ffffff;
-  color: #333;
-  padding: 1rem;
-}
-
-/* Encabezado */
-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-header h1 {
-  font-size: 1.8rem;
-  color: #d32f2f;
-  margin-bottom: 1rem;
-}
-
-#buscador {
-  width: 100%;
-  max-width: 500px;
-  padding: 0.5rem 1rem;
-  border: 2px solid #1976d2;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-/* Lista de resultados */
+/* Contenedor general */
 .lista-palabras {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  max-width: 800px;
+  margin: 1rem auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 /* Tarjeta */
 .tarjeta {
-  border: 2px solid #d32f2f;
-  border-left: 6px solid #fbc02d;
-  border-radius: 8px;
-  padding: 0.8rem;
-  background-color: #fff8f6;
-  transition: box-shadow 0.3s ease;
-}
-
-.tarjeta:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.cabecera {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #1976d2;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
-}
-
-.contenido-oculto {
-  display: none;
-  font-size: 0.95rem;
-  padding-left: 0.5rem;
-}
-
-.contenido-oculto.visible {
-  display: block;
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.imagen-palabra {
-  width: 100%;
-  max-width: 350px;
-  margin: 1rem 0;
-  border-radius: 4px;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.tarjeta:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Enlaces */
+/* Cabecera */
+.cabecera {
+  padding: 12px 16px;
+  background-color: #e0f2f1; /* verde agua claro */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* Reo Tahiti */
+.reo-tahiti {
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: #0288d1; /* azul base */
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+/* Reo Tahiti activo - más oscuro */
+.reo-tahiti.activo {
+  color: #01579b;
+}
+
+/* Español */
+.espanol {
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Categoría en itálicas y tamaño un poco más pequeño */
+.categoria {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Contenido oculto */
+.contenido-oculto {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  background-color: #fafafa;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #444;
+}
+
+/* Contenido visible */
+.contenido-oculto.visible {
+  max-height: 1000px; /* un valor alto para expandir */
+  padding: 12px 16px 16px 16px;
+}
+
+/* Imágenes dentro del contenido */
+.imagen-palabra {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Enlaces en la lista */
+.contenido-oculto ul {
+  padding-left: 1.2rem;
+  margin: 0.4rem 0 1rem 0;
+}
+
 .contenido-oculto a {
-  color: #d32f2f;
+  color: #0288d1;
   text-decoration: none;
+  transition: text-decoration 0.3s ease;
 }
 .contenido-oculto a:hover {
   text-decoration: underline;
 }
 
-/* Animaciones */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Notas y descripciones en párrafos */
+.contenido-oculto p {
+  margin: 0.4rem 0;
 }
-
-/* Responsive */
-@media (max-width: 600px) {
-  header h1 {
-    font-size: 1.4rem;
-  }
-
-  #buscador {
-    font-size: 0.95rem;
-  }
-
-  .cabecera {
-    font-size: 1rem;
-  }
-
-  .contenido-oculto {
-    font-size: 0.9rem;
-  }
-}
-

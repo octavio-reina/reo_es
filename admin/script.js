@@ -1,21 +1,16 @@
-const CLAVE_ADMIN = "tupass123"; // Cambia esto por una clave segura
+const CLAVE_ADMIN = "maitaimaitai"; // Cámbiala por una segura
 const API_URL = "https://script.google.com/macros/s/AKfycbwZwQCGXgoxE6kSx4N609NlUAdHT9Cbu8Oxr0Q7Y5McH95bctkihDZ1Ow8b-lonx2a0/exec";
-
-// GitHub Config
-const GITHUB_TOKEN = "ghp_xxx";
-const REPO_OWNER = "octavio-reina";
-const REPO_NAME = "reo_es";
-const UPLOAD_FOLDER = "assets/images";
+const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxshNA7u6-BR9XZZnYkjVicgrOt1qWIe1AfOta4Nb88f2ID1HMB8Zcc6bBqs-gt056h/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   const claveInput = document.getElementById("clave");
   const btnEntrar = document.getElementById("btnEntrar");
   const seccionAdmin = document.getElementById("seccion-admin");
   const notificacion = document.getElementById("notificacion");
-
   const form = document.getElementById("formulario");
   const inputImagen = form.querySelector('input[name="imagen"]');
 
+  // Validar acceso
   btnEntrar.addEventListener("click", () => {
     if (claveInput.value === CLAVE_ADMIN) {
       document.getElementById("seccion-login").classList.add("oculto");
@@ -59,13 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
       enlaces: form.enlaces.value.trim()
     };
 
-    // Validación básica
     if (!data.reo || !data.espanol) {
       mostrarNotificacion("Reo Tahiti y Español son obligatorios", "error");
       return;
     }
 
-    // Subir imagen (si hay)
     const file = inputImagen.files[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -74,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const url = await subirImagenAGitHub(file);
+        const url = await subirImagenViaAppsScript(file);
         data.imagen = url;
       } catch (error) {
         mostrarNotificacion("Error al subir imagen", "error");
@@ -82,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Enviar al servidor
     const params = new URLSearchParams(data);
     fetch(`${API_URL}?${params.toString()}`)
       .then(res => res.text())
@@ -97,7 +89,27 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => mostrarNotificacion("Error al guardar palabra: " + err, "error"));
   });
 
-  // Cargar categorías existentes
+  // Subida de imagen vía Apps Script seguro
+  async function subirImagenViaAppsScript(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const nombre = `${Date.now()}-${file.name}`.replace(/\s+/g, "_");
+
+    const response = await fetch(IMAGEN_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre, base64 })
+    });
+
+    const result = await response.json();
+    if (result.ok) {
+      return result.url;
+    } else {
+      throw new Error("No se pudo subir imagen");
+    }
+  }
+
+  // Cargar categorías
   function cargarCategorias() {
     fetch(`${API_URL}?accion=leer`)
       .then(res => res.json())
@@ -113,37 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Subir imagen al repositorio
-  async function subirImagenAGitHub(file) {
-    const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-    const fileName = `${Date.now()}-${file.name}`.replace(/\s+/g, "_");
-
-    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}/${fileName}`;
-
-    const body = {
-      message: `Subir imagen ${fileName}`,
-      content: base64
-    };
-
-    const res = await fetch(url, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${GITHUB_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
-
-    const json = await res.json();
-    if (!json.content || !json.content.download_url) {
-      throw new Error("Error al subir a GitHub");
-    }
-
-    return json.content.download_url;
-  }
-
-  // Notificación
+  // Mostrar notificación con contador
   function mostrarNotificacion(mensaje, tipo = "info") {
     notificacion.textContent = mensaje;
     notificacion.className = `notificacion ${tipo}`;
@@ -160,4 +142,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 });
-

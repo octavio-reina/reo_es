@@ -186,9 +186,9 @@ header h1 {
 }
 
 #menu-toggle {
-  position: fixed;
-  top: 1rem; /* alineado con padding-top del header */
-  left: 12px;
+  position: relative; /* ya no fijo */
+  top: 0;
+  left: 0;
   background: #00796b;
   color: white;
   border: none;
@@ -196,7 +196,6 @@ header h1 {
   padding: 0.4rem 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  z-index: 1200;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   transition: background-color 0.3s ease;
   user-select: none;
@@ -204,7 +203,10 @@ header h1 {
   line-height: 1.2;
   width: auto;
   min-width: 40px;
+  margin-bottom: 1rem; /* para separar del primer link */
+  z-index: 1400; /* opcional para que quede arriba dentro del menú */
 }
+
 #menu-toggle:hover {
   background-color: #004d40;
 }
@@ -218,16 +220,18 @@ header h1 {
   width: 250px;
   background: white;
   box-shadow: 2px 0 8px rgba(0,0,0,0.2);
-  padding: 2.5rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 1rem 1rem; /* menos padding top porque el botón está dentro */
   display: flex;
   flex-direction: column;
   gap: 1rem;
   transform: translateX(-260px);
   transition: transform 0.3s ease;
-  z-index: 1150;
+  z-index: 1300;
   user-select: none;
   overflow-y: auto;
 }
+
+
 .menu-desplegable a {
   color: #00796b;
   text-decoration: none;

@@ -25,6 +25,10 @@ body {
   padding: 0;
 }
 
+body.menu-abierto {
+  overflow: hidden;
+}
+
 /* HEADER */
 header {
   background-color: #00796b;

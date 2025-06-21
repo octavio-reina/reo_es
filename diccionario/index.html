@@ -42,17 +42,5 @@
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
-
-
-  <script>
-    // Registro del Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/reo_es/service-worker.js')
-          .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
-          .catch(err => console.error("❌ Error al registrar Service Worker:", err));
-      });
-    }
-  </script>
 </body>
 </html>

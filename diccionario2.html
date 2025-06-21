@@ -3,34 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <title>Diccionario Reo Tahiti</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
-    h1 { text-align: center; color: #00796b; }
-    input { width: 100%; padding: 0.6rem; font-size: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    th, td { border: 1px solid #ddd; padding: 0.75rem; text-align: left; }
-    th { background-color: #e0f2f1; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
+      max-width: 700px;
+      margin: auto;
+      background-color: #fdfdfd;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00695c;
+      margin-bottom: 1rem;
+    }
+
+    #search {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: transform 0.1s;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    .tahiti {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #00796b;
+    }
+
+    .espanol {
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .categoria {
+      font-size: 0.9rem;
+      color: #555;
+      font-style: italic;
+      margin-top: 0.2rem;
+    }
+
+    .notas {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 0.5rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #121212; color: #fff; }
+      .card { background-color: #1e1e1e; }
+      .tahiti { color: #4dd0e1; }
+      .espanol, .categoria, .notas { color: #eee; }
+      #search { background: #222; color: #fff; border-color: #444; }
+    }
   </style>
 </head>
 <body>
   <h1>Diccionario Reo Tahiti – Español</h1>
   <input type="text" id="search" placeholder="Buscar una palabra...">
-  <table>
-    <thead>
-      <tr>
-        <th>Reo Tahiti</th>
-        <th>Español</th>
-        <th>Categoría</th>
-        <th>Notas</th>
-      </tr>
-    </thead>
-    <tbody id="diccionario"></tbody>
-  </table>
+  <div id="diccionario"></div>
 
   <script>
-    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
+    const URL_CSV = "https://corsproxy.io/?https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
+
+    function crearTarjeta(palabra) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const tahiti = document.createElement("div");
+      tahiti.className = "tahiti";
+      tahiti.textContent = palabra["Reo Tahiti"];
+
+      const espanol = document.createElement("div");
+      espanol.className = "espanol";
+      espanol.textContent = palabra["Español"];
+
+      const categoria = document.createElement("div");
+      categoria.className = "categoria";
+      categoria.textContent = palabra["Categoría"] || "";
+
+      const notas = document.createElement("div");
+      notas.className = "notas";
+      notas.textContent = palabra["Notas"] || "";
+
+      card.appendChild(tahiti);
+      card.appendChild(espanol);
+      if (palabra["Categoría"]) card.appendChild(categoria);
+      if (palabra["Notas"]) card.appendChild(notas);
+
+      return card;
+    }
 
     function cargarDiccionario() {
       Papa.parse(URL_CSV, {
@@ -38,36 +118,22 @@
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-          console.log("Resultados:", results); // <- aquí vemos qué se está recibiendo
-          const tbody = document.getElementById("diccionario");
-
-          if (!results.data || !Array.isArray(results.data)) {
-            console.error("No se pudo obtener datos válidos.");
-            return;
-          }
-
-          results.data.forEach(row => {
-            if (!row["Reo Tahiti"]) return; // evitar filas vacías
-            const tr = document.createElement("tr");
-            ["Reo Tahiti", "Español", "Categoría", "Notas"].forEach(col => {
-              const td = document.createElement("td");
-              td.textContent = row[col] || "";
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
+          const contenedor = document.getElementById("diccionario");
+          contenedor.innerHTML = ""; // limpiar antes de volver a cargar
+          results.data.forEach(palabra => {
+            if (!palabra["Reo Tahiti"]) return;
+            contenedor.appendChild(crearTarjeta(palabra));
           });
-        },
-        error: function(err) {
-          console.error("Error al leer CSV:", err);
         }
       });
     }
 
+    // Buscador
     document.getElementById("search").addEventListener("input", function () {
       const filtro = this.value.toLowerCase();
-      document.querySelectorAll("#diccionario tr").forEach(tr => {
-        const texto = tr.textContent.toLowerCase();
-        tr.style.display = texto.includes(filtro) ? "" : "none";
+      document.querySelectorAll(".card").forEach(card => {
+        const texto = card.textContent.toLowerCase();
+        card.style.display = texto.includes(filtro) ? "" : "none";
       });
     });
 

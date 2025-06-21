@@ -1,34 +1,90 @@
-/* Fuente general y contenedor */
+/* === Fuente general y fondo === */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f4f4f4;
   margin: 0;
-  padding: 1rem;
+  padding: 0;
   color: #333;
 }
 
-h1 {
-  text-align: center;
+/* === Contenedor sticky === */
+#barra-superior {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f4f4f4;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Título y botón de menú */
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+/* h1 */
+.top-header h1 {
+  font-size: 1.3rem;
   color: #00695c;
-  margin-bottom: 1rem;
+  margin: 0;
+}
+
+/* Botón de menú */
+#menu-toggle {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #00695c;
+  padding: 0.25rem 0.5rem;
 }
 
 /* Buscador */
 #buscador {
-  display: block;
   width: 100%;
   max-width: 600px;
-  margin: 0 auto 1.5rem auto;
+  margin: 0.5rem auto 1rem auto;
   padding: 0.75rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
+  display: block;
 }
 
-/* Lista contenedora */
+/* === Menú desplegable === */
+.menu-desplegable {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  background-color: #e0f2f1;
+}
+.menu-desplegable a {
+  color: #0288d1;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 4px 0;
+}
+.menu-desplegable a:hover {
+  text-decoration: underline;
+}
+.menu-desplegable.activo {
+  max-height: 200px;
+  opacity: 1;
+}
+
+/* === Contenedor de tarjetas === */
 .lista-palabras {
   max-width: 800px;
   margin: 0 auto;
+  padding: 1rem;
 }
 
 /* Tarjeta */
@@ -45,7 +101,7 @@ h1 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-/* Cabecera de la tarjeta */
+/* Cabecera */
 .cabecera {
   padding: 16px;
   background-color: #e0f2f1;
@@ -118,36 +174,7 @@ h1 {
   text-decoration: underline;
 }
 
-/* Párrafos generales */
+/* Párrafos dentro del contenido */
 .contenido-oculto p {
   margin: 0.4rem 0;
-}
-
-
-/* Menú desplegable animado */
-.menu-desplegable {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.menu-desplegable a {
-  color: #0288d1;
-  text-decoration: none;
-  font-size: 1rem;
-  padding: 4px 0;
-}
-.menu-desplegable a:hover {
-  text-decoration: underline;
-}
-
-/* Menú visible con animación */
-.menu-desplegable.activo {
-  max-height: 200px; /* puedes ajustar esto si hay más enlaces */
-  opacity: 1;
 }

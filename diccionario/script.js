@@ -45,32 +45,43 @@ function mostrarPalabras(lista) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "tarjeta";
 
-    // Cabecera: reo tahiti en bold azul, español y categoría en itálicas
+    // Cabecera con reo tahiti en bold, tamaño grande, color azul
     const cabecera = document.createElement("div");
     cabecera.className = "cabecera";
 
-    // Estructura interna cabecera
-    cabecera.innerHTML = `
-      <div class="reo">${palabra["Reo Tahiti"] || "-"}</div>
-      <div class="espanol">${palabra["Español"] || "-"}</div>
-      <div class="categoria">${palabra["Categoría"] ? palabra["Categoría"] : ""}</div>
-    `;
+    // Crear el span para Reo Tahiti, para poder cambiar color al hacer click
+    const reoSpan = document.createElement("span");
+    reoSpan.className = "reo-tahiti";
+    reoSpan.textContent = palabra["Reo Tahiti"] || "-";
 
+    // Español y categoría
+    const espanolSpan = document.createElement("span");
+    espanolSpan.className = "espanol";
+    espanolSpan.textContent = ` — ${palabra["Español"] || "-"}`;
+
+    const categoriaSpan = document.createElement("span");
+    categoriaSpan.className = "categoria";
+    if (palabra["Categoría"]) {
+      categoriaSpan.textContent = ` (${palabra["Categoría"]})`;
+    }
+
+    cabecera.appendChild(reoSpan);
+    cabecera.appendChild(espanolSpan);
+    cabecera.appendChild(categoriaSpan);
+
+    // Contenido oculto con detalles
     const contenido = document.createElement("div");
     contenido.className = "contenido-oculto";
 
     if (palabra["Notas"]) {
       contenido.innerHTML += `<p><strong>Notas:</strong> ${palabra["Notas"]}</p>`;
     }
-
     if (palabra["Descripción"]) {
       contenido.innerHTML += `<p><strong>Descripción:</strong> ${palabra["Descripción"]}</p>`;
     }
-
     if (palabra["Imagen"]) {
-      contenido.innerHTML += `<img src="${palabra["Imagen"]}" alt="Imagen de ${palabra["Reo Tahiti"]}" class="imagen-palabra" />`;
+      contenido.innerHTML += `<img src="${palabra["Imagen"]}" alt="Imagen relacionada con ${palabra["Reo Tahiti"]}" class="imagen-palabra" />`;
     }
-
     if (palabra["Enlaces"]) {
       const enlaces = palabra["Enlaces"].split(",").map(e => e.trim());
       contenido.innerHTML += `<p><strong>Referencias:</strong></p><ul>` +
@@ -78,9 +89,10 @@ function mostrarPalabras(lista) {
         `</ul>`;
     }
 
+    // Al hacer click en la cabecera: mostrar/ocultar contenido y cambiar color de reo tahiti
     cabecera.addEventListener("click", () => {
       contenido.classList.toggle("visible");
-      cabecera.querySelector(".reo").classList.toggle("activo");
+      reoSpan.classList.toggle("activo");
     });
 
     tarjeta.appendChild(cabecera);

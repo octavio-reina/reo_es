@@ -30,7 +30,10 @@ body {
   font-size: 1.3rem;
   color: #00695c;
   margin: 0;
+  flex-grow: 1;
+  text-align: center;
 }
+
 
 /* Botón de menú */
 #menu-toggle {
@@ -40,7 +43,9 @@ body {
   cursor: pointer;
   color: #00695c;
   padding: 0.25rem 0.5rem;
+  flex-shrink: 0;
 }
+
 
 /* Buscador */
 #buscador {

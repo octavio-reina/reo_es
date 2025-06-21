@@ -1,160 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Diccionario Reo Tahiti</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <link rel="manifest" href="manifest.json" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diccionario Reo Tahiti - Español</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#00796b" />
 
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      padding: 1rem;
-      max-width: 700px;
-      margin: auto;
-      background-color: #fdfdfd;
-    }
+  <!-- Íconos -->
+  <link rel="icon" href="/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/icon-512.png" />
 
-    h1 {
-      text-align: center;
-      color: #00695c;
-      margin-bottom: 1rem;
-    }
-
-    #search {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-      padding: 1rem;
-      margin-bottom: 1rem;
-      transition: transform 0.1s;
-    }
-
-    .card:hover {
-      transform: scale(1.01);
-    }
-
-    .tahiti {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #00796b;
-    }
-
-    .espanol {
-      margin-top: 0.3rem;
-      font-size: 1rem;
-      color: #333;
-    }
-
-    .categoria {
-      font-size: 0.9rem;
-      color: #555;
-      font-style: italic;
-      margin-top: 0.2rem;
-    }
-
-    .notas {
-      font-size: 0.85rem;
-      color: #777;
-      margin-top: 0.5rem;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      body { background-color: #121212; color: #fff; }
-      .card { background-color: #1e1e1e; }
-      .tahiti { color: #4dd0e1; }
-      .espanol, .categoria, .notas { color: #eee; }
-      #search { background: #222; color: #fff; border-color: #444; }
-    }
-  </style>
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Diccionario Reo Tahiti – Español</h1>
-  <input type="text" id="search" placeholder="Buscar una palabra...">
-  <div id="diccionario"></div>
+  <header>
+    <h1>Diccionario Reo Tahiti - Español</h1>
+    <input type="text" id="buscador" placeholder="Buscar palabra..." />
+  </header>
 
+  <main>
+    <div id="resultados" class="lista-palabras"></div>
+  </main>
+
+  <!-- Script principal -->
+  <script src="script.js"></script>
+
+  <!-- Registro del service worker -->
   <script>
-    const URL_CSV = "https://corsproxy.io/?https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
-
-    function crearTarjeta(palabra) {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const tahiti = document.createElement("div");
-      tahiti.className = "tahiti";
-      tahiti.textContent = palabra["Reo Tahiti"];
-
-      const espanol = document.createElement("div");
-      espanol.className = "espanol";
-      espanol.textContent = palabra["Español"];
-
-      const categoria = document.createElement("div");
-      categoria.className = "categoria";
-      categoria.textContent = palabra["Categoría"] || "";
-
-      const notas = document.createElement("div");
-      notas.className = "notas";
-      notas.textContent = palabra["Notas"] || "";
-
-      card.appendChild(tahiti);
-      card.appendChild(espanol);
-      if (palabra["Categoría"]) card.appendChild(categoria);
-      if (palabra["Notas"]) card.appendChild(notas);
-
-      return card;
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(reg => console.log("✔️ Service Worker registrado", reg))
+        .catch(err => console.error("❌ Error al registrar SW", err));
     }
-
-    function cargarDiccionario() {
-      Papa.parse(URL_CSV, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          const contenedor = document.getElementById("diccionario");
-          contenedor.innerHTML = ""; // limpiar antes de volver a cargar
-          results.data.forEach(palabra => {
-            if (!palabra["Reo Tahiti"]) return;
-            contenedor.appendChild(crearTarjeta(palabra));
-          });
-        }
-      });
-    }
-
-    // Buscador
-    document.getElementById("search").addEventListener("input", function () {
-      const filtro = this.value.toLowerCase();
-      document.querySelectorAll(".card").forEach(card => {
-        const texto = card.textContent.toLowerCase();
-        card.style.display = texto.includes(filtro) ? "" : "none";
-      });
-    });
-
-    cargarDiccionario();
   </script>
-  
-  <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("service-worker.js")
-      .then(function () {
-        console.log("Service Worker registrado con éxito");
-      })
-      .catch(function (error) {
-        console.log("Error al registrar Service Worker:", error);
-      });
-  }
-</script>
-
 </body>
 </html>

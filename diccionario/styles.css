@@ -272,6 +272,17 @@ main {
     max-width: 100%;
   }
 
+  #menu-close {
+  background: transparent;
+  color: #00796b;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  align-self: flex-end;
+  padding: 0.2rem;
+}
+
+
   #menu-toggle {
     align-self: flex-start;
     margin-bottom: 0.5rem;

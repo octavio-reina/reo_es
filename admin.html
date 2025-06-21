@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Modo Admin – Diccionario</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       font-family: sans-serif;
@@ -15,19 +15,27 @@
       color: #00695c;
       text-align: center;
     }
-    input, textarea, button {
+    input, textarea, select, button {
       width: 100%;
       padding: 0.7rem;
       margin: 0.5rem 0;
       font-size: 1rem;
       border-radius: 6px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     button {
       background: #00796b;
       color: white;
       border: none;
       cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+    button:active, button.active-click {
+      background-color: #004d40 !important;
+      transform: scale(0.98);
+      transition: transform 0.1s;
     }
     .oculto {
       display: none;
@@ -43,6 +51,10 @@
       padding: 0.7rem 1.5rem;
       cursor: pointer;
       font-weight: bold;
+      user-select: none;
+      margin: 0 0.25rem;
+      border-radius: 6px 6px 0 0;
+      transition: background-color 0.25s ease;
     }
     .tab-btn.active {
       background: #00796b;
@@ -51,9 +63,15 @@
     #estado {
       color: green;
       font-weight: bold;
+      text-align: center;
+      min-height: 1.5em;
+      margin-bottom: 0.5rem;
     }
     #error {
       color: red;
+      text-align: center;
+      min-height: 1.5em;
+      margin-bottom: 0.5rem;
     }
     table {
       width: 100%;
@@ -63,22 +81,29 @@
     th, td {
       border: 1px solid #ccc;
       padding: 0.5rem;
+      vertical-align: middle;
     }
     th {
       background: #e0f2f1;
     }
     .acciones button {
-      margin: 2px;
-      padding: 0.4rem;
-      font-size: 0.9rem;
+      margin: 2px 4px;
+      padding: 0.3rem 0.6rem;
+      font-size: 1rem;
+      border-radius: 4px;
+    }
+    #busqueda {
+      margin-top: 0.5rem;
+      margin-bottom: 0.25rem;
     }
   </style>
 </head>
 <body>
   <h1>Modo Administrador</h1>
+
   <div id="clave">
     <p>Ingresa la clave secreta para continuar:</p>
-    <input type="password" id="codigo" placeholder="Clave secreta">
+    <input type="password" id="codigo" placeholder="Clave secreta" />
     <button onclick="verificarClave()">Entrar</button>
   </div>
 
@@ -91,17 +116,35 @@
     <div id="estado"></div>
     <div id="error"></div>
 
+    <!-- Sección Agregar -->
     <div id="agregar">
       <h2 id="titulo-form">Agregar nueva palabra</h2>
-      <input type="text" id="reo" placeholder="Reo Tahiti">
-      <input type="text" id="espanol" placeholder="Español">
-      <input type="text" id="categoria" placeholder="Categoría">
-      <textarea id="notas" placeholder="Notas"></textarea>
-      <button onclick="guardar()">Guardar</button>
+      <input type="text" id="reo" placeholder="Reo Tahiti" autocomplete="off" />
+      <input type="text" id="espanol" placeholder="Español" autocomplete="off" />
+      
+      <select id="categoria-select" onchange="mostrarInputCategoria()">
+        <option value="">Selecciona categoría</option>
+      </select>
+      <input
+        id="categoria-nueva"
+        class="oculto"
+        placeholder="Nueva categoría"
+        autocomplete="off"
+      />
+
+      <textarea id="notas" placeholder="Notas" rows="3"></textarea>
+      <button onclick="handleGuardar(this)">Guardar</button>
     </div>
 
+    <!-- Sección Gestionar -->
     <div id="gestionar" class="oculto">
-      <input type="text" id="busqueda" placeholder="Buscar..." oninput="filtrarTabla()">
+      <input
+        type="text"
+        id="busqueda"
+        placeholder="Buscar..."
+        oninput="filtrarTabla()"
+        autocomplete="off"
+      />
       <table id="tabla">
         <thead>
           <tr>
@@ -120,8 +163,11 @@
 
   <script>
     const CLAVE_SECRETA = "maitaimaitai";
-    const URL_BASE = "https://script.google.com/macros/s/AKfycbwZwQCGXgoxE6kSx4N609NlUAdHT9Cbu8Oxr0Q7Y5McH95bctkihDZ1Ow8b-lonx2a0/exec";
+    const URL_BASE =
+      "https://script.google.com/macros/s/AKfycbwZwQCGXgoxE6kSx4N609NlUAdHT9Cbu8Oxr0Q7Y5McH95bctkihDZ1Ow8b-lonx2a0/exec";
+
     let editandoID = null;
+    let palabrasCache = [];
 
     function verificarClave() {
       if (document.getElementById("codigo").value.trim() === CLAVE_SECRETA) {
@@ -134,19 +180,26 @@
     }
 
     function mostrarSeccion(seccion) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('#agregar, #gestionar').forEach(sec => sec.classList.add('oculto'));
-      document.getElementById(seccion).classList.remove('oculto');
-      document.querySelector(`.tab-btn[onclick*='${seccion}']`).classList.add('active');
+      document.querySelectorAll(".tab-btn").forEach((btn) =>
+        btn.classList.remove("active")
+      );
+      document.querySelectorAll("#agregar, #gestionar").forEach((sec) =>
+        sec.classList.add("oculto")
+      );
+      document.getElementById(seccion).classList.remove("oculto");
+      document.querySelector(`.tab-btn[onclick*='${seccion}']`).classList.add("active");
+      clearMensajes();
     }
 
     function cargarTabla() {
       fetch(URL_BASE + "?accion=leer")
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
+          palabrasCache = data;
+          cargarCategorias();
           const tbody = document.querySelector("#tabla tbody");
           tbody.innerHTML = "";
-          data.forEach(palabra => {
+          data.forEach((palabra) => {
             const fila = document.createElement("tr");
             fila.innerHTML = `
               <td>${palabra.id}</td>
@@ -161,12 +214,16 @@
             `;
             tbody.appendChild(fila);
           });
+        })
+        .catch((err) => {
+          mostrarError("Error al cargar datos.");
+          console.error(err);
         });
     }
 
     function filtrarTabla() {
       const query = document.getElementById("busqueda").value.toLowerCase();
-      document.querySelectorAll("#tabla tbody tr").forEach(row => {
+      document.querySelectorAll("#tabla tbody tr").forEach((row) => {
         const texto = row.innerText.toLowerCase();
         row.style.display = texto.includes(query) ? "" : "none";
       });
@@ -175,70 +232,190 @@
     function editar(palabra) {
       document.getElementById("reo").value = palabra.reo;
       document.getElementById("espanol").value = palabra.espanol;
-      document.getElementById("categoria").value = palabra.categoria;
+      document.getElementById("categoria-select").value =
+        palabra.categoria || "";
+      mostrarInputCategoria();
+      if (palabra.categoria && !document.getElementById("categoria-select").querySelector(`option[value="${palabra.categoria}"]`)) {
+        // Si categoría no existe en select (por si se borró), la añadimos
+        const opt = document.createElement("option");
+        opt.value = palabra.categoria;
+        opt.textContent = palabra.categoria;
+        document.getElementById("categoria-select").appendChild(opt);
+        document.getElementById("categoria-select").value = palabra.categoria;
+        mostrarInputCategoria();
+      }
+      document.getElementById("categoria-nueva").value = "";
       document.getElementById("notas").value = palabra.notas;
       editandoID = palabra.id;
-      mostrarSeccion('agregar');
+      mostrarSeccion("agregar");
       document.getElementById("titulo-form").textContent = `Editando palabra ID ${palabra.id}`;
+      clearMensajes();
     }
 
+    function mostrarInputCategoria() {
+      const select = document.getElementById("categoria-select");
+      const inputNueva = document.getElementById("categoria-nueva");
+      if (select.value === "otra") {
+        inputNueva.classList.remove("oculto");
+      } else {
+        inputNueva.classList.add("oculto");
+        inputNueva.value = "";
+      }
+    }
+
+    function cargarCategorias() {
+      const select = document.getElementById("categoria-select");
+      select.innerHTML = '<option value="">Selecciona categoría</option>';
+      const categorias = [
+        ...new Set(
+          palabrasCache
+            .map((p) => p.categoria && p.categoria.trim())
+            .filter((c) => c && c !== "")
+        ),
+      ].sort();
+      categorias.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      });
+      const optOtra = document.createElement("option");
+      optOtra.value = "otra";
+      optOtra.textContent = "Otra...";
+      select.appendChild(optOtra);
+      mostrarInputCategoria();
+    }
+
+    function efectoClick(btn) {
+      btn.classList.add("active-click");
+      setTimeout(() => btn.classList.remove("active-click"), 300);
+    }
+
+    function handleGuardar(btn) {
+      efectoClick(btn);
+      guardar();
+    }
+
+    function guardar() {
+      clearMensajes();
+      const reo = document.getElementById("reo").value.trim();
+      const espanol = document.getElementById("espanol").value.trim();
+      const categoriaSeleccionada = document.getElementById("categoria-select").value;
+      const categoriaNueva = document.getElementById("categoria-nueva").value.trim();
+      const categoria =
+        categoriaSeleccionada === "otra" ? categoriaNueva : categoriaSeleccionada;
+      const notas = document.getElementById("notas").value.trim();
+
+      if (!reo || !espanol) {
+        return mostrarError("Reo Tahiti y Español son obligatorios.");
+      }
+
+      // Duplicados solo si agregando (editandoID null)
+      if (!editandoID) {
+        const dup = palabrasCache.find(
+          (p) =>
+            p.reo.toLowerCase() === reo.toLowerCase() ||
+            p.espanol.toLowerCase() === espanol.toLowerCase()
+        );
+        if (dup) {
+          const confirmar = confirm(
+            `¡Atención! Se encontró una palabra duplicada:\nReo Tahiti: ${dup.reo}\nEspañol: ${dup.espanol}\n\n¿Quieres agregar igual? (Aceptar)\n¿O prefieres editar la palabra existente? (Cancelar)`
+          );
+          if (!confirmar) {
+            editar(dup);
+            return;
+          }
+        }
+      }
+
+      let url = `${URL_BASE}?reo=${encodeURIComponent(
+        reo
+      )}&espanol=${encodeURIComponent(
+        espanol
+      )}&categoria=${encodeURIComponent(categoria)}&notas=${encodeURIComponent(
+        notas
+      )}`;
+      if (editandoID) url += `&accion=editar&id=${editandoID}`;
+
+      fetch(url)
+        .then((res) => res.text())
+        .then((data) => {
+          if (data.trim() === "OK") {
+            mostrarEstado(
+              editandoID ? "✅ Palabra actualizada" : "✅ Palabra agregada"
+            );
+            limpiarFormulario();
+            cargarTabla();
+          } else {
+            mostrarError("❌ Error: " + data);
+          }
+        })
+        .catch(() => {
+          mostrarError("❌ Error al guardar.");
+        });
+    }
+
+    function eliminar(id) {
+      clearMensajes();
+      if (!confirm("¿Eliminar esta palabra?")) return;
+      fetch(`${URL_BASE}?accion=eliminar&id=${id}`)
+        .then((res) => res.text())
+        .then((data) => {
+          if (data.trim() === "OK") {
+            mostrarEstado("✅ Palabra eliminada");
+            cargarTabla();
+          } else {
+            mostrarError("❌ Error al eliminar: " + data);
+          }
+        })
+        .catch(() => {
+          mostrarError("❌ Error al eliminar.");
+        });
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("reo").value = "";
+      document.getElementById("espanol").value = "";
+      document.getElementById("categoria-select").value = "";
+      document.getElementById("categoria-nueva").value = "";
+      document.getElementById("categoria-nueva").classList.add("oculto");
+      document.getElementById("notas").value = "";
+      document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
+      editandoID = null;
+      clearMensajes();
+    }
+
+    let cuentaRegresivaTimeout;
     function mostrarEstado(mensaje) {
-      let segundos = 5;
+      clearMensajes();
       const estado = document.getElementById("estado");
+      let segundos = 5;
       estado.textContent = `${mensaje} (${segundos})`;
-      const intervalo = setInterval(() => {
+
+      cuentaRegresivaTimeout = setInterval(() => {
         segundos--;
         if (segundos > 0) {
           estado.textContent = `${mensaje} (${segundos})`;
         } else {
-          clearInterval(intervalo);
+          clearInterval(cuentaRegresivaTimeout);
           estado.textContent = "";
         }
       }, 1000);
     }
 
-    function guardar() {
-      const reo = encodeURIComponent(document.getElementById("reo").value.trim());
-      const espanol = encodeURIComponent(document.getElementById("espanol").value.trim());
-      const categoria = encodeURIComponent(document.getElementById("categoria").value.trim());
-      const notas = encodeURIComponent(document.getElementById("notas").value.trim());
-      if (!reo || !espanol) return document.getElementById("error").textContent = "Reo Tahiti y Español son obligatorios.";
-
-      let url = `${URL_BASE}?reo=${reo}&espanol=${espanol}&categoria=${categoria}&notas=${notas}`;
-      if (editandoID) url += `&accion=editar&id=${editandoID}`;
-
-      fetch(url)
-        .then(res => res.text())
-        .then(data => {
-          if (data.trim() === "OK") {
-            mostrarEstado(editandoID ? "✅ Palabra actualizada" : "✅ Palabra agregada");
-            document.getElementById("error").textContent = "";
-            document.getElementById("reo").value = "";
-            document.getElementById("espanol").value = "";
-            document.getElementById("categoria").value = "";
-            document.getElementById("notas").value = "";
-            document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
-            editandoID = null;
-            cargarTabla();
-          } else {
-            document.getElementById("estado").textContent = "";
-            document.getElementById("error").textContent = "❌ Error: " + data;
-          }
-        });
+    function mostrarError(mensaje) {
+      clearMensajes();
+      const error = document.getElementById("error");
+      error.textContent = mensaje;
+      setTimeout(() => {
+        error.textContent = "";
+      }, 7000);
     }
 
-    function eliminar(id) {
-      if (!confirm("¿Eliminar esta palabra?")) return;
-      fetch(`${URL_BASE}?accion=eliminar&id=${id}`)
-        .then(res => res.text())
-        .then(data => {
-          if (data.trim() === "OK") {
-            mostrarEstado("✅ Palabra eliminada");
-            cargarTabla();
-          } else {
-            document.getElementById("error").textContent = "❌ Error al eliminar: " + data;
-          }
-        });
+    function clearMensajes() {
+      clearInterval(cuentaRegresivaTimeout);
+      document.getElementById("estado").textContent = "";
+      document.getElementById("error").textContent = "";
     }
   </script>
 </body>

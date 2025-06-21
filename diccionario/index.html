@@ -18,22 +18,21 @@
 </head>
 <body>
   <!-- HEADER STICKY -->
-<header id="barra-superior">
-  <div class="header-container">
-    <button id="menu-toggle">☰</button>
-    <h1>Diccionario Reo Tahiti - Español</h1>
-  </div>
-  <input type="text" id="buscador" placeholder="Buscar palabra..." />
-</header>
-
+  <header id="barra-superior">
+    <div class="header-container">
+      <button id="menu-toggle">☰</button>
+      <h1>Diccionario Reo Tahiti - Español</h1>
+    </div>
+    <input type="text" id="buscador" placeholder="Buscar palabra..." />
+  </header>
 
   <!-- MENÚ DESPLEGABLE -->
- <nav id="menu" class="menu-desplegable oculto">
-  <button id="menu-close">✕</button>
-  <a href="#">Sobre Nosotros</a>
-  <a href="#">Contacto</a>
-</nav>
-
+  <nav id="menu" class="menu-desplegable oculto" aria-label="Menú principal">
+    <button id="menu-close" aria-label="Cerrar menú">✕</button>
+    <a href="index.html">Diccionario</a>
+    <a href="about.html">Sobre Nosotros</a>
+    <a href="contact.html">Contacto</a>
+  </nav>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main>
@@ -43,24 +42,6 @@
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("menu-toggle");
-    const close = document.getElementById("menu-close");
-    const menu = document.getElementById("menu");
-    const body = document.body;
-
-    toggle.addEventListener("click", () => {
-      menu.classList.add("activo");
-      body.classList.add("menu-abierto");
-    });
-
-    close.addEventListener("click", () => {
-      menu.classList.remove("activo");
-      body.classList.remove("menu-abierto");
-    });
-  });
-</script>
 
 
   <script>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Diccionario Reo Tahiti</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 800px; margin: auto; }
+    h1 { text-align: center; color: #00796b; }
+    input { width: 100%; padding: 0.6rem; font-size: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: 0.75rem; text-align: left; }
+    th { background-color: #e0f2f1; }
+  </style>
+</head>
+<body>
+  <h1>Diccionario Reo Tahiti – Español</h1>
+  <input type="text" id="search" placeholder="Buscar una palabra...">
+  <table>
+    <thead>
+      <tr>
+        <th>Reo Tahiti</th>
+        <th>Español</th>
+        <th>Categoría</th>
+        <th>Notas</th>
+      </tr>
+    </thead>
+    <tbody id="diccionario"></tbody>
+  </table>
+
+  <script>
+    const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
+
+    function cargarDiccionario() {
+      Papa.parse(URL_CSV, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          console.log("Resultados:", results); // <- aquí vemos qué se está recibiendo
+          const tbody = document.getElementById("diccionario");
+
+          if (!results.data || !Array.isArray(results.data)) {
+            console.error("No se pudo obtener datos válidos.");
+            return;
+          }
+
+          results.data.forEach(row => {
+            if (!row["Reo Tahiti"]) return; // evitar filas vacías
+            const tr = document.createElement("tr");
+            ["Reo Tahiti", "Español", "Categoría", "Notas"].forEach(col => {
+              const td = document.createElement("td");
+              td.textContent = row[col] || "";
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        },
+        error: function(err) {
+          console.error("Error al leer CSV:", err);
+        }
+      });
+    }
+
+    document.getElementById("search").addEventListener("input", function () {
+      const filtro = this.value.toLowerCase();
+      document.querySelectorAll("#diccionario tr").forEach(tr => {
+        const texto = tr.textContent.toLowerCase();
+        tr.style.display = texto.includes(filtro) ? "" : "none";
+      });
+    });
+
+    cargarDiccionario();
+  </script>
+</body>
+</html>

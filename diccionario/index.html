@@ -18,7 +18,15 @@
 </head>
 <body>
   <header>
-    <h1>Diccionario Reo Tahiti - Español</h1>
+    <div class="barra-superior">
+      <button id="menu-toggle">☰</button>
+      <h1>Diccionario Reo Tahiti - Español</h1>
+    </div>
+    <nav id="menu" class="oculto">
+      <a href="#">Sobre Nosotros</a>
+      <a href="#">Contacto</a>
+      <!-- Más enlaces si deseas -->
+    </nav>
     <input type="text" id="buscador" placeholder="Buscar palabra..." />
   </header>
 
@@ -26,19 +34,18 @@
     <div id="resultados" class="lista-palabras"></div>
   </main>
 
-  <!-- Librería PapaParse para CSV -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-  <!-- Script principal -->
   <script src="script.js"></script>
-
-  <!-- Registro del service worker -->
   <script>
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/reo_es/service-worker.js")
-        .then(reg => console.log("✔️ Service Worker registrado", reg))
-        .catch(err => console.error("❌ Error al registrar SW", err));
-    }
+    // Toggle menú
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("menu");
+      toggle.addEventListener("click", () => {
+        menu.classList.toggle("oculto");
+      });
+    });
   </script>
 </body>
 </html>

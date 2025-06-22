@@ -31,14 +31,14 @@
         <input type="text" id="notas" name="notas" placeholder="Notas (opcional)" />
         <textarea id="descripcion" name="descripcion" placeholder="Descripción larga (opcional)" rows="3"></textarea>
         <input type="file" id="imagen" name="imagen" accept="image/png, image/jpeg" />
+        <input type="text" id="imagenUrl" name="imagenUrl" hidden />
         <input type="text" id="enlaces" name="enlaces" placeholder="Enlaces de referencia (separados por coma)" />
-        <button type="submit">Guardar palabra</button>
+        <button type="submit">Agregar palabra</button>
       </form>
     </section>
 
     <section id="editar-palabra" class="oculto">
       <h2>Editar o eliminar palabras</h2>
-      <input type="text" id="buscador" placeholder="Buscar palabra..." autocomplete="off" />
       <div id="tabla-palabras">Cargando palabras...</div>
     </section>
   </main>

@@ -4,7 +4,7 @@ const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvsNQa3MWh4n
 
 let palabrasGlobal = [];
 let modoEdicion = false;
-let palabraEditandoId = null;
+let idEditando = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   const claveInput = document.getElementById("clave");
@@ -13,8 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const notificacion = document.getElementById("notificacion");
   const form = document.getElementById("formAgregar");
   const inputImagen = form.querySelector('input[name="imagen"]');
-  const submitButton = form.querySelector('button[type="submit"]');
+  const btnSubmit = form.querySelector("button[type='submit']");
 
+  // Validar acceso
   btnEntrar.addEventListener("click", () => {
     if (claveInput.value === CLAVE_ADMIN) {
       document.getElementById("seccion-login").classList.add("oculto");
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Control tabs
   document.getElementById("tab-agregar").addEventListener("click", () => cambiarTab("agregar"));
   document.getElementById("tab-editar").addEventListener("click", () => cambiarTab("editar"));
 
@@ -45,15 +47,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Envío del formulario Agregar o Editar
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const data = {
+      id: idEditando,
       reo: form.reo.value.trim(),
       espanol: form.espanol.value.trim(),
       categoria: form.categoria.value.trim(),
       descripcion: form.descripcion.value.trim(),
-      imagen: form.imagen.value.trim(), // Ya puede tener prellenado desde edición
+      imagen: form.imagenUrl?.value.trim() || "",
       enlaces: form.enlaces.value.trim(),
       notas: form.notas?.value.trim() || ""
     };
@@ -63,48 +67,41 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Si estamos agregando una imagen nueva
-    const file = inputImagen.files[0];
-    if (file) {
-      if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
-        mostrarNotificacion("Solo se permiten imágenes PNG o JPG", "error");
-        return;
-      }
-      try {
-        mostrarNotificacion("Subiendo imagen...", "info");
-        data.imagen = await subirImagenViaAppsScript(file);
-        mostrarNotificacion("Imagen subida correctamente", "success");
-      } catch (error) {
-        mostrarNotificacion("Error al subir imagen", "error");
-        return;
+    if (!modoEdicion) {
+      const file = inputImagen.files[0];
+      if (file) {
+        if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+          mostrarNotificacion("Solo se permiten imágenes PNG o JPG", "error");
+          return;
+        }
+        try {
+          mostrarNotificacion("Subiendo imagen...", "info");
+          data.imagen = await subirImagenViaAppsScript(file);
+          mostrarNotificacion("Imagen subida correctamente", "success");
+        } catch (error) {
+          mostrarNotificacion("Error al subir imagen", "error");
+          return;
+        }
       }
     }
 
-    try {
-      const params = new URLSearchParams({
-        accion: modoEdicion ? "editar" : "agregar",
-        ...data,
-        ...(modoEdicion ? { id: palabraEditandoId } : {})
-      });
+    const accion = modoEdicion ? "editar" : "agregar";
+    const params = new URLSearchParams({ accion, ...data });
 
+    try {
       const res = await fetch(`${API_URL}?${params.toString()}`);
       const txt = await res.text();
-
       if (txt.includes("OK")) {
         mostrarNotificacion(modoEdicion ? "✅ Palabra actualizada" : "✅ Palabra agregada", "success");
         form.reset();
         cargarCategorias();
         cargarTablaPalabras();
-        if (modoEdicion) {
-          submitButton.textContent = "Agregar palabra";
-          modoEdicion = false;
-          palabraEditandoId = null;
-        }
+        if (modoEdicion) cancelarEdicion();
       } else {
         throw new Error(txt);
       }
     } catch (err) {
-      mostrarNotificacion("Error al guardar: " + err.message, "error");
+      mostrarNotificacion("Error: " + err.message, "error");
     }
   });
 
@@ -198,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tablaContenedor.querySelectorAll(".btn-editar").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.closest("tr").dataset.id;
-        prepararFormularioParaEdicion(id);
+        activarEdicion(id);
       });
     });
 
@@ -212,25 +209,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function prepararFormularioParaEdicion(id) {
+  function activarEdicion(id) {
     const palabra = palabrasGlobal.find(p => p.id === id);
     if (!palabra) return;
 
-    modoEdicion = true;
-    palabraEditandoId = palabra.id;
-
     cambiarTab("agregar");
+    modoEdicion = true;
+    idEditando = id;
 
+    const form = document.getElementById("formAgregar");
     form.reo.value = palabra.reo;
     form.espanol.value = palabra.espanol;
     form.categoria.value = palabra.categoria || "";
     form.descripcion.value = palabra.descripcion || "";
     form.enlaces.value = palabra.enlaces || "";
-    form.imagen.value = palabra.imagen || "";
     form.notas.value = palabra.notas || "";
+    if (form.imagenUrl) form.imagenUrl.value = palabra.imagen || "";
 
-    submitButton.textContent = "Guardar cambios";
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const btnSubmit = form.querySelector("button[type='submit']");
+    btnSubmit.textContent = "Actualizar";
+
+    let btnCancelar = document.getElementById("btnCancelarEdicion");
+    if (!btnCancelar) {
+      btnCancelar = document.createElement("button");
+      btnCancelar.id = "btnCancelarEdicion";
+      btnCancelar.type = "button";
+      btnCancelar.textContent = "Cancelar edición";
+      btnCancelar.style.marginTop = "0.5rem";
+      btnSubmit.insertAdjacentElement("afterend", btnCancelar);
+    }
+
+    btnCancelar.addEventListener("click", cancelarEdicion);
+  }
+
+  function cancelarEdicion() {
+    modoEdicion = false;
+    idEditando = null;
+    const form = document.getElementById("formAgregar");
+    form.reset();
+    form.querySelector("button[type='submit']").textContent = "Agregar";
+    const btnCancelar = document.getElementById("btnCancelarEdicion");
+    if (btnCancelar) btnCancelar.remove();
   }
 
   async function eliminarPalabra(id) {

@@ -130,7 +130,7 @@ function mostrarPalabras(lista) {
     if (palabra["Descripción"]) {
      const descripcion = document.createElement("p");
      const textoConSaltos = palabra["Descripción"].replace(/\n/g, "<br>");
-     descripcion.innerHTML = `<strong>Descripción:</strong> ${textoConSaltos}`;
+     descripcion.innerHTML = `<strong>Descripción:</strong><br>${textoConSaltos}`;
      contenido.appendChild(descripcion);
     }
 

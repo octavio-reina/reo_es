@@ -116,6 +116,7 @@ form#formAgregar {
 form#formAgregar input[type="text"],
 form#formAgregar input[type="password"],
 form#formAgregar input[type="file"],
+form#formAgregar input[type="hidden"],
 form#formAgregar textarea {
   padding: 0.6rem;
   border-radius: 5px;
@@ -133,9 +134,21 @@ form#formAgregar textarea:focus {
   outline: none;
 }
 
-/* Campo de notas adicional (si se usa como textarea) */
+form#formAgregar input[type="hidden"] {
+  display: none;
+}
+
 form#formAgregar textarea[name="notas"] {
   min-height: 70px;
+}
+
+/* Imagen previa si se desea mostrar */
+.imagen-previa {
+  max-width: 100%;
+  height: auto;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.15);
 }
 
 /* Botón de guardar */
@@ -286,6 +299,7 @@ form#formAgregar button[type="submit"]:active {
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  overflow-y: auto;
 }
 
 .modal-contenido {
@@ -318,11 +332,6 @@ form#formAgregar button[type="submit"]:active {
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
-}
-
-/* Campo notas dentro del modal */
-.modal-contenido form textarea[name="notas"] {
-  min-height: 70px;
 }
 
 .modal-contenido form textarea {

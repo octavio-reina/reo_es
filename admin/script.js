@@ -1,4 +1,4 @@
-const CLAVE_ADMIN = "maitaimaitai"; // Cambia por tu clave segura
+const CLAVE_ADMIN = "maitaimaitai";
 const API_URL = "https://script.google.com/macros/s/AKfycbyI0EZvG_lOfDIFSk5EsKspKvt3eblG1DlOUbTxYWr_6_39sWuscLwqNoKUkBBv6Aw/exec";
 const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxshNA7u6-BR9XZZnYkjVicgrOt1qWIe1AfOta4Nb88f2ID1HMB8Zcc6bBqs-gt056h/exec";
 
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Control tabs
+  // Control de tabs
   document.getElementById("tab-agregar").addEventListener("click", () => cambiarTab("agregar"));
   document.getElementById("tab-editar").addEventListener("click", () => cambiarTab("editar"));
 
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       descripcion: form.descripcion.value.trim(),
       imagen: "",
       enlaces: form.enlaces.value.trim(),
-      notas: form.notas.value.trim()
+      notas: form.notas?.value.trim() || ""
     };
 
     if (!data.reo || !data.espanol) {
@@ -96,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Subir imagen al backend Apps Script
   async function subirImagenViaAppsScript(file) {
     const arrayBuffer = await file.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
@@ -116,7 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Cargar categorías en datalist
   function cargarCategorias() {
     fetch(`${API_URL}?accion=leer`)
       .then(res => res.json())
@@ -133,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Cargar tabla para editar/eliminar
   function cargarTablaPalabras() {
     fetch(`${API_URL}?accion=leer`)
       .then(res => res.json())
@@ -143,9 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Mostrar tabla con buscador y botones
   function mostrarTabla(palabras) {
     const tablaContenedor = document.getElementById("tabla-palabras");
+
+    // Evitar múltiples buscadores
+    const buscadorAntiguo = document.getElementById("buscador");
+    if (buscadorAntiguo) buscadorAntiguo.remove();
+
     if (!palabras.length) {
       tablaContenedor.innerHTML = "<p>No hay palabras.</p>";
       return;
@@ -188,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mostrarTabla(filtradas);
     });
 
-    // Eventos editar
     tablaContenedor.querySelectorAll(".btn-editar").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.closest("tr").dataset.id;
@@ -196,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Eventos eliminar
     tablaContenedor.querySelectorAll(".btn-eliminar").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.closest("tr").dataset.id;
@@ -207,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Modal edición palabra
   function abrirModalEdicion(id) {
     const palabra = palabrasGlobal.find(p => p.id === id);
     if (!palabra) return;
@@ -286,7 +284,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Eliminar palabra
   async function eliminarPalabra(id) {
     try {
       const params = new URLSearchParams({ accion: "eliminar", id });
@@ -303,7 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Mostrar notificación con contador regresivo
   function mostrarNotificacion(mensaje, tipo = "info") {
     notificacion.textContent = mensaje;
     notificacion.className = `notificacion ${tipo}`;

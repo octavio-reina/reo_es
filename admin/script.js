@@ -3,6 +3,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyI0EZvG_lOfDIFSk5EsKsp
 const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvsNQa3MWh4nCXLLRZQKzsQFEtvg0U1fDHkMUIlqt5PIalPPrYVC24Xp4pF8CLzpi7/exec";
 
 let palabrasGlobal = [];
+let modoEdicion = false;
+let palabraEditandoId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   const claveInput = document.getElementById("clave");
@@ -11,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const notificacion = document.getElementById("notificacion");
   const form = document.getElementById("formAgregar");
   const inputImagen = form.querySelector('input[name="imagen"]');
+  const submitButton = form.querySelector('button[type="submit"]');
 
-  // Validar acceso
   btnEntrar.addEventListener("click", () => {
     if (claveInput.value === CLAVE_ADMIN) {
       document.getElementById("seccion-login").classList.add("oculto");
@@ -25,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Control de tabs
   document.getElementById("tab-agregar").addEventListener("click", () => cambiarTab("agregar"));
   document.getElementById("tab-editar").addEventListener("click", () => cambiarTab("editar"));
 
@@ -44,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Envío del formulario Agregar
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       espanol: form.espanol.value.trim(),
       categoria: form.categoria.value.trim(),
       descripcion: form.descripcion.value.trim(),
-      imagen: "",
+      imagen: form.imagen.value.trim(), // Ya puede tener prellenado desde edición
       enlaces: form.enlaces.value.trim(),
       notas: form.notas?.value.trim() || ""
     };
@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Si estamos agregando una imagen nueva
     const file = inputImagen.files[0];
     if (file) {
       if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
@@ -79,20 +80,31 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const params = new URLSearchParams({ accion: "agregar", ...data });
     try {
+      const params = new URLSearchParams({
+        accion: modoEdicion ? "editar" : "agregar",
+        ...data,
+        ...(modoEdicion ? { id: palabraEditandoId } : {})
+      });
+
       const res = await fetch(`${API_URL}?${params.toString()}`);
       const txt = await res.text();
+
       if (txt.includes("OK")) {
-        mostrarNotificacion("✅ Palabra agregada correctamente", "success");
+        mostrarNotificacion(modoEdicion ? "✅ Palabra actualizada" : "✅ Palabra agregada", "success");
         form.reset();
         cargarCategorias();
         cargarTablaPalabras();
+        if (modoEdicion) {
+          submitButton.textContent = "Agregar palabra";
+          modoEdicion = false;
+          palabraEditandoId = null;
+        }
       } else {
         throw new Error(txt);
       }
     } catch (err) {
-      mostrarNotificacion("Error al guardar palabra: " + err.message, "error");
+      mostrarNotificacion("Error al guardar: " + err.message, "error");
     }
   });
 
@@ -142,11 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function mostrarTabla(palabras) {
     const tablaContenedor = document.getElementById("tabla-palabras");
-
-    // Evitar múltiples buscadores
-    const buscadorAntiguo = document.getElementById("buscador");
-    if (buscadorAntiguo) buscadorAntiguo.remove();
-
     if (!palabras.length) {
       tablaContenedor.innerHTML = "<p>No hay palabras.</p>";
       return;
@@ -180,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "</tbody></table>";
     tablaContenedor.innerHTML = html;
 
-    // Buscador dinámico
     document.getElementById("buscador").addEventListener("input", e => {
       const filtro = e.target.value.toLowerCase();
       const filtradas = palabrasGlobal.filter(p =>
@@ -192,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tablaContenedor.querySelectorAll(".btn-editar").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.closest("tr").dataset.id;
-        abrirModalEdicion(id);
+        prepararFormularioParaEdicion(id);
       });
     });
 
@@ -206,82 +212,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function abrirModalEdicion(id) {
+  function prepararFormularioParaEdicion(id) {
     const palabra = palabrasGlobal.find(p => p.id === id);
     if (!palabra) return;
 
-    const modalHtml = `
-      <div class="modal-fondo">
-        <div class="modal-contenido">
-          <h3>Editar Palabra ID: ${palabra.id}</h3>
-          <form id="formEditar">
-            <label>Reo Tahiti:
-              <input name="reo" value="${palabra.reo}" required />
-            </label>
-            <label>Español:
-              <input name="espanol" value="${palabra.espanol}" required />
-            </label>
-            <label>Categoría:
-              <input name="categoria" value="${palabra.categoria || ''}" list="categorias" />
-            </label>
-            <label>Notas:
-              <input name="notas" value="${palabra.notas || ''}" />
-            </label>
-            <label>Descripción:
-              <textarea name="descripcion">${palabra.descripcion || ''}</textarea>
-            </label>
-            <label>Imagen (URL):
-              <input name="imagen" value="${palabra.imagen || ''}" />
-            </label>
-            <label>Enlaces:
-              <input name="enlaces" value="${palabra.enlaces || ''}" />
-            </label>
-            <button type="submit">Guardar</button>
-            <button type="button" id="btnCerrarModal">Cancelar</button>
-          </form>
-        </div>
-      </div>`;
+    modoEdicion = true;
+    palabraEditandoId = palabra.id;
 
-    document.body.insertAdjacentHTML("beforeend", modalHtml);
+    cambiarTab("agregar");
 
-    document.getElementById("btnCerrarModal").addEventListener("click", () => {
-      document.querySelector(".modal-fondo").remove();
-    });
+    form.reo.value = palabra.reo;
+    form.espanol.value = palabra.espanol;
+    form.categoria.value = palabra.categoria || "";
+    form.descripcion.value = palabra.descripcion || "";
+    form.enlaces.value = palabra.enlaces || "";
+    form.imagen.value = palabra.imagen || "";
+    form.notas.value = palabra.notas || "";
 
-    document.getElementById("formEditar").addEventListener("submit", async e => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const updated = {
-        id: palabra.id,
-        reo: formData.get("reo").trim(),
-        espanol: formData.get("espanol").trim(),
-        categoria: formData.get("categoria").trim(),
-        notas: formData.get("notas").trim(),
-        descripcion: formData.get("descripcion").trim(),
-        imagen: formData.get("imagen").trim(),
-        enlaces: formData.get("enlaces").trim()
-      };
-
-      if (!updated.reo || !updated.espanol) {
-        mostrarNotificacion("Reo Tahiti y Español son obligatorios", "error");
-        return;
-      }
-
-      try {
-        const params = new URLSearchParams({ accion: "editar", ...updated });
-        const res = await fetch(`${API_URL}?${params.toString()}`);
-        const text = await res.text();
-        if (text.includes("OK")) {
-          mostrarNotificacion("✅ Palabra actualizada", "success");
-          cargarTablaPalabras();
-          document.querySelector(".modal-fondo").remove();
-        } else {
-          throw new Error(text);
-        }
-      } catch (err) {
-        mostrarNotificacion("Error al actualizar: " + err.message, "error");
-      }
-    });
+    submitButton.textContent = "Guardar cambios";
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function eliminarPalabra(id) {

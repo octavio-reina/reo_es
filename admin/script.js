@@ -1,6 +1,6 @@
 const CLAVE_ADMIN = "maitaimaitai";
 const API_URL = "https://script.google.com/macros/s/AKfycbyI0EZvG_lOfDIFSk5EsKspKvt3eblG1DlOUbTxYWr_6_39sWuscLwqNoKUkBBv6Aw/exec";
-const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxshNA7u6-BR9XZZnYkjVicgrOt1qWIe1AfOta4Nb88f2ID1HMB8Zcc6bBqs-gt056h/exec";
+const IMAGEN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvsNQa3MWh4nCXLLRZQKzsQFEtvg0U1fDHkMUIlqt5PIalPPrYVC24Xp4pF8CLzpi7/exec";
 
 let palabrasGlobal = [];
 

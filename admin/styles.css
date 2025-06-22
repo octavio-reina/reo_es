@@ -1,4 +1,3 @@
-
 /* RESET BÁSICO */
 * {
   box-sizing: border-box;
@@ -134,6 +133,12 @@ form#formAgregar textarea:focus {
   outline: none;
 }
 
+/* Campo de notas adicional (si se usa como textarea) */
+form#formAgregar textarea[name="notas"] {
+  min-height: 70px;
+}
+
+/* Botón de guardar */
 form#formAgregar button[type="submit"] {
   padding: 0.8rem;
   background-color: #00796b;
@@ -315,6 +320,11 @@ form#formAgregar button[type="submit"]:active {
   resize: vertical;
 }
 
+/* Campo notas dentro del modal */
+.modal-contenido form textarea[name="notas"] {
+  min-height: 70px;
+}
+
 .modal-contenido form textarea {
   min-height: 70px;
 }
@@ -350,8 +360,7 @@ form#formAgregar button[type="submit"]:active {
 
   form#formAgregar input[type="text"],
   form#formAgregar textarea,
-  form#formAgregar input[type="file"],
-  form#formAgregar input[type="text"] {
+  form#formAgregar input[type="file"] {
     font-size: 0.9rem;
   }
 

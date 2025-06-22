@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modo Admin – Diccionario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Modo Administrador</h1>
+
+  <div id="clave">
+    <p>Ingresa la clave secreta para continuar:</p>
+    <input type="password" id="codigo" placeholder="Clave secreta" />
+    <button onclick="verificarClave()">Entrar</button>
+  </div>
+
+  <div id="admin" class="oculto">
+    <nav>
+      <button class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
+      <button class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
+    </nav>
+
+    <div id="estado"></div>
+    <div id="error"></div>
+
+    <!-- Sección Agregar -->
+    <div id="agregar">
+      <h2 id="titulo-form">Agregar nueva palabra</h2>
+      <input type="text" id="reo" placeholder="Reo Tahiti" autocomplete="off" />
+      <input type="text" id="espanol" placeholder="Español" autocomplete="off" />
+
+      <select id="categoria-select" onchange="mostrarInputCategoria()">
+        <option value="">Selecciona categoría</option>
+      </select>
+      <input
+        id="categoria-nueva"
+        class="oculto"
+        placeholder="Nueva categoría"
+        autocomplete="off"
+      />
+
+      <textarea id="notas" placeholder="Notas (opcional)" rows="2"></textarea>
+      <textarea id="descripcion" placeholder="Descripción larga (opcional)" rows="3"></textarea>
+
+      <input type="text" id="enlaces" placeholder="Enlaces (separados por coma)" />
+
+      <input type="file" id="imagen" accept="image/*" />
+
+      <button onclick="handleGuardar(this)">Guardar</button>
+    </div>
+
+    <!-- Sección Gestionar -->
+    <div id="gestionar" class="oculto">
+      <input
+        type="text"
+        id="busqueda"
+        placeholder="Buscar..."
+        oninput="filtrarTabla()"
+        autocomplete="off"
+      />
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Reo Tahiti</th>
+            <th>Español</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

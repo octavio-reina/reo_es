@@ -191,6 +191,24 @@ td button:hover {
   background-color: #00796b;
 }
 
+   /* Miniatura para imágenes en tabla */
+    img.miniatura {
+      max-width: 200px;
+      max-height: 200px;
+      object-fit: contain;
+      display: block;
+    }
+    /* Estilo botón para enlaces */
+    button.ver-enlaces {
+      cursor: pointer;
+      background-color: #00796b;
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
 /* RESPONSIVE */
 @media (max-width: 600px) {
   body {

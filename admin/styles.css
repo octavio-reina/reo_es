@@ -43,13 +43,15 @@ h2 {
 }
 
 /* NAVIGATION TABS */
+
 nav {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  border-bottom: 2px solid #00796b;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: nowrap;
+    border-bottom: 2px solid #00796b;
+    flex-direction: row;
 }
 
 .tab-btn {
@@ -193,7 +195,6 @@ td.acciones button {
 /* Buscador */
 #busqueda {
   margin-bottom: 1rem;
-  max-width: 350px;
 }
 
 /* ENLACES DINÁMICOS */

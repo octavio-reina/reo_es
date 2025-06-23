@@ -48,7 +48,9 @@
       <div id="contenedor-enlaces"></div>
       <button type="button" onclick="agregarCampoEnlace()">+ Agregar enlace</button>
 
-      <input type="file" id="imagen" accept="image/*" />
+      <!-- Nueva forma de cargar imagen -->
+      <label for="imagen-url">Imagen (URL externa, opcional):</label>
+      <input type="url" id="imagen-url" placeholder="https://..." autocomplete="off" />
 
       <button onclick="handleGuardar(this)">Guardar</button>
     </div>

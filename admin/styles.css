@@ -1,4 +1,3 @@
-
 /* RESET GENERAL */
 * {
   box-sizing: border-box;
@@ -73,6 +72,39 @@ form,
   margin-bottom: 1rem;
 }
 
+input,
+textarea,
+select,
+button {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background: #00796b;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  user-select: none;
+}
+
+button:active,
+button.active-click {
+  background-color: #004d40;
+  transform: scale(0.97);
+}
+
 /* ESTADO Y ERROR */
 #estado,
 #error {
@@ -107,7 +139,7 @@ table {
   background-color: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   margin-bottom: 1rem;
-  min-width: 900px; /* para que el scroll horizontal funcione */
+  min-width: 900px;
 }
 
 th,
@@ -123,7 +155,7 @@ th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 88px; /* Ajustar si header/nav cambian de altura */
+  top: 88px;
   z-index: 10;
 }
 
@@ -310,8 +342,12 @@ button.ver-enlaces:hover {
     height: auto;
   }
 
-  /* Tabla scroll horizontal */
   .tabla-contenedor {
     overflow-x: auto;
   }
+}
+
+/* 👇 ESTA CLASE FALTABA */
+.oculto {
+  display: none !important;
 }

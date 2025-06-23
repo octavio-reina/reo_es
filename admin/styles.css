@@ -148,8 +148,14 @@ button.active-click {
   text-align: center;
   font-weight: bold;
   margin-bottom: 1rem;
-  min-height: 1.5em;
+  display: none; /* 🔁 Por defecto ocultos */
 }
+
+#estado.visible,
+#error.visible {
+  display: block; /* 🔁 Solo visibles cuando se aplica esta clase */
+}
+
 
 #estado {
   color: #2e7d32;

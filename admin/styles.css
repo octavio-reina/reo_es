@@ -16,8 +16,8 @@ body {
 }
 
 /* Sticky header (título + nav) */
-header,
-nav {
+.sticky-header,
+.sticky-header nav {
   position: sticky;
   top: 0;
   background: white;
@@ -26,7 +26,7 @@ nav {
 }
 
 /* Espaciado interno para header y nav */
-header {
+.sticky-header {
   padding: 1rem 0;
   text-align: center;
 }
@@ -90,9 +90,14 @@ form,
 }
 
 /* TABLA */
+
 #gestionar {
-  overflow-x: auto;
   margin-bottom: 1rem;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+  position: relative;
 }
 
 table {
@@ -117,7 +122,7 @@ th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 88px; /* sticky header (header + nav) altura aprox */
+  top: 88px; /* Ajustar si header/nav cambian de altura */
   z-index: 10;
 }
 
@@ -305,7 +310,7 @@ button.ver-enlaces:hover {
   }
 
   /* Tabla scroll horizontal */
-  #gestionar {
+  .tabla-contenedor {
     overflow-x: auto;
   }
 }

@@ -86,7 +86,7 @@ function editar(palabra) {
 
   editandoID = palabra.id;
   mostrarSeccion("agregar");
-  document.getElementById("titulo-form").textContent = `Editando palabra ID ${palabra.id}`;
+  document.getElementById("titulo-form").textContent = `Editando: "${palabra.reo}" (${palabra.espanol})`;
   clearMensajes();
 }
 

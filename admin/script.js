@@ -74,7 +74,7 @@ function editar(palabra) {
   document.getElementById("categoria-nueva").value = "";
   document.getElementById("notas").value = palabra.notas || "";
   document.getElementById("descripcion").value = palabra.descripcion || "";
-  document.getElementById("imagen").value = "";
+  document.getElementById("imagen-url").value = palabra.imagen || "";
 
   limpiarCamposEnlaces();
   try {
@@ -144,7 +144,7 @@ function guardar() {
   const categoria = categoriaSeleccionada === "otra" ? categoriaNueva : categoriaSeleccionada;
   const notas = document.getElementById("notas").value.trim();
   const descripcion = document.getElementById("descripcion").value.trim();
-  const imagen = document.getElementById("imagen").files[0]; // (opcional)
+  const imagen = document.getElementById("imagen-url").value.trim();
 
   const enlaces = [];
   document.querySelectorAll(".campo-enlace").forEach(contenedor => {
@@ -180,9 +180,9 @@ function guardar() {
     espanol
   )}&categoria=${encodeURIComponent(categoria)}&notas=${encodeURIComponent(
     notas
-  )}&descripcion=${encodeURIComponent(descripcion)}&enlaces=${encodeURIComponent(
-    JSON.stringify(enlaces)
-  )}`;
+  )}&descripcion=${encodeURIComponent(descripcion)}&imagen=${encodeURIComponent(
+    imagen
+  )}&enlaces=${encodeURIComponent(JSON.stringify(enlaces))}`;
 
   if (editandoID) url += `&accion=editar&id=${editandoID}`;
 
@@ -245,11 +245,10 @@ function limpiarFormulario() {
   document.getElementById("categoria-nueva").classList.add("oculto");
   document.getElementById("notas").value = "";
   document.getElementById("descripcion").value = "";
-  document.getElementById("imagen").value = "";
+  document.getElementById("imagen-url").value = "";
   limpiarCamposEnlaces();
   document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
   editandoID = null;
-  // NO se borran notificaciones inmediatamente
 }
 
 let cuentaRegresivaTimeout;

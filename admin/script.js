@@ -373,6 +373,7 @@ function mostrarEstado(mensaje) {
   const estado = document.getElementById("estado");
   let segundos = 5;
   estado.textContent = `${mensaje} (${segundos})`;
+  estado.classList.add("visible");
 
   cuentaRegresivaTimeout = setInterval(() => {
     segundos--;
@@ -381,6 +382,7 @@ function mostrarEstado(mensaje) {
     } else {
       clearInterval(cuentaRegresivaTimeout);
       estado.textContent = "";
+      estado.classList.remove("visible");
     }
   }, 1000);
 }
@@ -389,6 +391,7 @@ function mostrarError(mensaje) {
   clearMensajes();
   const error = document.getElementById("error");
   error.textContent = mensaje;
+  error.classList.add("visible");
   setTimeout(() => {
     error.textContent = "";
   }, 7000);

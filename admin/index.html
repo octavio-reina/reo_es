@@ -43,7 +43,16 @@
       <textarea id="notas" placeholder="Notas (opcional)" rows="2"></textarea>
       <textarea id="descripcion" placeholder="Descripción larga (opcional)" rows="3"></textarea>
 
-      <input type="text" id="enlaces" placeholder="Enlaces (separados por coma)" />
+      <!-- Enlaces dinámicos -->
+      <div id="links-container">
+        <label>Enlaces de referencia (opcional):</label>
+        <div class="link-row">
+          <input type="url" class="link-url" placeholder="URL" />
+          <input type="text" class="link-text" placeholder="Texto visible" />
+          <button type="button" class="btn-remove-link" title="Eliminar enlace">✖</button>
+        </div>
+      </div>
+      <button type="button" id="btn-add-link">Agregar otro enlace</button>
 
       <input type="file" id="imagen" accept="image/*" />
 

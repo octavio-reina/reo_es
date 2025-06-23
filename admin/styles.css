@@ -17,6 +17,15 @@
   padding: 0.5rem 0;
 }
 
+.busqueda-sticky {
+  position: sticky;
+  top: 220px; /* 👈 altura exacta del header fijo */
+  background: white;
+  z-index: 99;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,

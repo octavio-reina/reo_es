@@ -217,7 +217,7 @@ function limpiarFormulario() {
   document.getElementById("imagen").value = "";
   document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
   editandoID = null;
-  clearMensajes();
+  //clearMensajes();
 }
 
 let cuentaRegresivaTimeout;

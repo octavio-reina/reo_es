@@ -37,18 +37,86 @@ function cargarTabla() {
       cargarCategorias();
       const tbody = document.querySelector("#tabla tbody");
       tbody.innerHTML = "";
+
       data.forEach((palabra) => {
+        // Función para truncar texto y agregar tooltip
+        const truncarConTooltip = (texto, maxLen = 100) => {
+          if (!texto) return "";
+          if (texto.length <= maxLen) return texto;
+          const corto = texto.substring(0, maxLen) + "...";
+          return `<span title="${texto.replace(/"/g, "&quot;")}">${corto}</span>`;
+        };
+
+        // Procesar enlaces para el botón
+        const enlaces = (() => {
+          try {
+            return JSON.parse(palabra.enlaces || "[]");
+          } catch {
+            return [];
+          }
+        })();
+
+        const mostrarEnlaces = () => {
+          if (enlaces.length === 0) return "—";
+          // Abrir ventana con enlaces en lista
+          const ventana = window.open("", "_blank", "width=400,height=300,scrollbars=yes");
+          const htmlEnlaces = enlaces
+            .map(
+              (enlace) =>
+                `<li><a href="${enlace.url}" target="_blank" rel="noopener noreferrer">${enlace.texto || enlace.url}</a></li>`
+            )
+            .join("");
+          ventana.document.write(`
+            <html><head><title>Enlaces de referencia</title></head><body>
+            <h2>Enlaces para "${palabra.reo}"</h2>
+            <ul>${htmlEnlaces}</ul>
+            <button onclick="window.close()">Cerrar</button>
+            </body></html>
+          `);
+          ventana.document.close();
+        };
+
+        // Crear fila
         const fila = document.createElement("tr");
+
         fila.innerHTML = `
           <td>${palabra.id}</td>
           <td>${palabra.reo}</td>
           <td>${palabra.espanol}</td>
-          <td>${palabra.categoria}</td>
+          <td>${palabra.categoria || ""}</td>
+          <td>${truncarConTooltip(palabra.notas)}</td>
+          <td>${truncarConTooltip(palabra.descripcion)}</td>
+          <td>
+            ${
+              palabra.imagen
+                ? `<img 
+                    src="${palabra.imagen}" 
+                    alt="Imagen de ${palabra.reo}" 
+                    class="miniatura" 
+                    loading="lazy"
+                    width="200" height="200"
+                  />`
+                : "—"
+            }
+          </td>
+          <td>
+            ${
+              enlaces.length > 0
+                ? `<button class="ver-enlaces">Ver enlaces</button>`
+                : "—"
+            }
+          </td>
           <td class="acciones">
             <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
             <button onclick='eliminar(${palabra.id})'>🗑️</button>
           </td>
         `;
+
+        // Listener para botón ver enlaces
+        if (enlaces.length > 0) {
+          fila.querySelector(".ver-enlaces").addEventListener("click", mostrarEnlaces);
+        }
+
         tbody.appendChild(fila);
       });
     })
@@ -57,6 +125,7 @@ function cargarTabla() {
       console.error(err);
     });
 }
+
 
 function filtrarTabla() {
   const query = document.getElementById("busqueda").value.toLowerCase();

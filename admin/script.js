@@ -6,6 +6,7 @@ let palabrasCache = [];
 let paginaActual = 1;
 const TAMANIO_PAGINA = 10;
 
+
 function verificarClave() {
   if (document.getElementById("codigo").value.trim() === CLAVE_SECRETA) {
     document.getElementById("clave").classList.add("oculto");

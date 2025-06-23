@@ -7,21 +7,24 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="sticky-header">
-    <h1>Administrador</h1>
-    <nav>
-      <button class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
-      <button class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
-    </nav>
-  </header>
 
+  <!-- Sección de clave (visible al inicio) -->
   <div id="clave">
     <p>Ingresa la clave secreta para continuar:</p>
     <input type="password" id="codigo" placeholder="Clave secreta" />
     <button onclick="verificarClave()">Entrar</button>
   </div>
 
+  <!-- Sección admin (oculta hasta pasar clave) -->
   <div id="admin" class="oculto">
+    <header class="sticky-header">
+      <h1>Administrador</h1>
+      <nav>
+        <button class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
+        <button class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
+      </nav>
+    </header>
+
     <div id="estado"></div>
     <div id="error"></div>
 

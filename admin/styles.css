@@ -6,7 +6,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   background-color: #f7f7f7;
   color: #222;
   max-width: 1100px;
@@ -14,52 +15,26 @@ body {
   padding: 1rem;
 }
 
-h1, h2 {
-  color: #00695c;
+/* Sticky header (título + nav) */
+header,
+nav {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Espaciado interno para header y nav */
+header {
+  padding: 1rem 0;
   text-align: center;
+}
+
+h1,
+h2 {
+  color: #00695c;
   margin-bottom: 1rem;
-}
-
-input, textarea, select, button {
-  width: 100%;
-  padding: 0.7rem;
-  margin-bottom: 0.8rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-family: inherit;
-}
-
-textarea {
-  resize: vertical;
-}
-
-button {
-  background: #00796b;
-  color: white;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  user-select: none;
-}
-
-button:active, button.active-click {
-  background-color: #004d40;
-  transform: scale(0.97);
-}
-
-.oculto {
-  display: none;
-}
-
-/* LOGIN */
-#clave {
-  margin-bottom: 2rem;
-}
-
-#clave input {
-  margin-bottom: 0.5rem;
 }
 
 /* NAVIGATION TABS */
@@ -69,6 +44,7 @@ nav {
   margin-bottom: 1rem;
   gap: 0.5rem;
   flex-wrap: wrap;
+  padding-bottom: 0.5rem;
 }
 
 .tab-btn {
@@ -92,12 +68,13 @@ form,
   background-color: #ffffff;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   margin-bottom: 1rem;
 }
 
 /* ESTADO Y ERROR */
-#estado, #error {
+#estado,
+#error {
   text-align: center;
   font-weight: bold;
   margin-bottom: 1rem;
@@ -115,44 +92,67 @@ form,
 /* TABLA */
 #gestionar {
   overflow-x: auto;
+  margin-bottom: 1rem;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   margin-bottom: 1rem;
+  min-width: 900px; /* para que el scroll horizontal funcione */
 }
 
-th, td {
+th,
+td {
   padding: 0.7rem;
   border: 1px solid #ddd;
   text-align: left;
   vertical-align: top;
+  white-space: nowrap;
 }
 
 th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 0;
-  z-index: 1;
+  top: 88px; /* sticky header (header + nav) altura aprox */
+  z-index: 10;
 }
 
+/* Sticky columna acciones derecha */
+td.acciones,
+th.acciones {
+  position: sticky;
+  right: 0;
+  background: white;
+  box-shadow: -3px 0 5px -2px rgba(0, 0, 0, 0.1);
+  z-index: 11;
+  white-space: nowrap;
+}
+
+/* Botones en tabla */
 td button {
   margin-right: 0.3rem;
   padding: 0.3rem 0.6rem;
   font-size: 0.95rem;
   border-radius: 4px;
+  border: none;
+  background-color: #00796b;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 td button:hover {
-  opacity: 0.85;
+  background-color: #005a4f;
 }
 
+/* Buscador */
 #busqueda {
   margin-bottom: 1rem;
+  max-width: 350px;
 }
 
 /* ENLACES DINÁMICOS */
@@ -171,19 +171,26 @@ td button:hover {
 .campo-enlace input[type="text"] {
   flex: 1;
   margin-bottom: 0;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .campo-enlace button {
   background: #d32f2f;
   color: white;
-  font-size: 1rem;
-  padding: 0.5rem;
+  font-size: 1.1rem;
+  padding: 0.3rem 0.6rem;
   border-radius: 4px;
   width: 2.5rem;
   height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .campo-enlace button:hover {
@@ -194,6 +201,13 @@ td button:hover {
 #agregar button[type="button"] {
   background-color: #009688;
   margin-bottom: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: bold;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  width: auto;
 }
 
 #agregar button[type="button"]:hover {
@@ -208,7 +222,7 @@ img.miniatura {
   display: block;
   margin: auto;
   border-radius: 4px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Estilo botón para enlaces */
@@ -227,17 +241,51 @@ button.ver-enlaces:hover {
   background-color: #005a4f;
 }
 
+/* PAGINACIÓN */
+#paginacion {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#paginacion button {
+  background-color: #e0f2f1;
+  border: none;
+  margin: 0 0.25rem;
+  padding: 0.5rem 0.9rem;
+  font-weight: bold;
+  color: #00796b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#paginacion button:hover {
+  background-color: #b2dfdb;
+}
+
+#paginacion button.active {
+  background-color: #00796b;
+  color: white;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(0, 121, 107, 0.6);
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   body {
     padding: 0.5rem;
   }
 
-  input, textarea, select, button {
+  input,
+  textarea,
+  select,
+  button {
     font-size: 0.95rem;
   }
 
-  th, td {
+  th,
+  td {
     font-size: 0.9rem;
   }
 
@@ -254,5 +302,10 @@ button.ver-enlaces:hover {
   img.miniatura {
     max-width: 100%;
     height: auto;
+  }
+
+  /* Tabla scroll horizontal */
+  #gestionar {
+    overflow-x: auto;
   }
 }

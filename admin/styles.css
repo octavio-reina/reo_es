@@ -197,6 +197,17 @@ th {
   z-index: 10;
 }
 
+/* Sticky columna izquierda (Reo Tahiti) */
+th.sticky-col,
+td.sticky-col {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 10;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+
 /* Sticky columna acciones derecha */
 td.acciones,
 th.acciones {

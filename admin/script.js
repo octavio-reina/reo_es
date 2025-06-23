@@ -101,8 +101,7 @@ function renderizarTabla() {
     const fila = document.createElement("tr");
 
     fila.innerHTML = `
-      <td>${palabra.id}</td>
-      <td>${palabra.reo}</td>
+      <td class="sticky-col">${palabra.reo}</td>
       <td>${palabra.espanol}</td>
       <td>${palabra.categoria || ""}</td>
       <td>${truncarConTooltip(palabra.notas)}</td>
@@ -129,7 +128,7 @@ function renderizarTabla() {
       </td>
       <td class="acciones sticky-col">
         <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
-        <button onclick='eliminar(${palabra.id})'>🗑️</button>
+        <button onclick='eliminar(${palabra.reo})'>🗑️</button>
       </td>
     `;
 
@@ -200,7 +199,7 @@ function editar(palabra) {
     agregarCampoEnlace();
   }
 
-  editandoID = palabra.id;
+  editandoID = palabra.reo;
   mostrarSeccion("agregar");
   document.getElementById("titulo-form").textContent = `Editando: "${palabra.reo}" (${palabra.espanol})`;
   clearMensajes();

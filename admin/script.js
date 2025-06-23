@@ -127,7 +127,7 @@ function renderizarTabla() {
             : "—"
         }
       </td>
-      <td class="acciones sticky-col">
+      <td class="acciones">
         <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
         <button onclick='eliminar(${palabra.reo})'>🗑️</button>
       </td>

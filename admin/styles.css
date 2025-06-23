@@ -6,7 +6,15 @@
 }
 
 #admin {
-  margin-top: 160px; /* Ajusta según altura real del header */
+  margin-top: 220px; /* Ajusta según altura real del header */
+}
+
+#gestionar #busqueda {
+  position: sticky;
+  top: 220px; /* mismo valor que el header */
+  z-index: 1000;
+  background-color: white;
+  padding: 0.5rem 0;
 }
 
 

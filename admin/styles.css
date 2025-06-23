@@ -37,6 +37,26 @@ body {
   overflow: auto;
 }
 
+.btn-salir {
+  background-color: #c62828;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  z-index: 110;
+}
+
+.btn-salir:hover {
+  background-color: #b71c1c;
+}
+
+
 h1,
 h2 {
   color: #00695c;
@@ -171,7 +191,6 @@ th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 104px; /* header + nav (56px + padding extra) */
   z-index: 10;
 }
 

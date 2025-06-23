@@ -16,13 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarDatos();
   }
 
-  // Filtro
   const buscador = document.getElementById("buscador");
   if (buscador) {
     buscador.addEventListener("input", filtrarPalabras);
   }
 
-  // Menú hamburguesa
   const toggles = document.querySelectorAll("#menu-toggle");
   const menu = document.getElementById("menu");
   const close = document.getElementById("menu-close");
@@ -130,6 +128,8 @@ function mostrarPalabras(lista) {
     if (palabra["Imagen"]) {
       const img = document.createElement("img");
       img.src = palabra["Imagen"];
+      img.alt = palabra["Reo Tahiti"];
+      img.loading = "lazy";
       img.className = "imagen-palabra";
       contenido.appendChild(img);
     }

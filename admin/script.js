@@ -74,8 +74,15 @@ function editar(palabra) {
   document.getElementById("categoria-nueva").value = "";
   document.getElementById("notas").value = palabra.notas || "";
   document.getElementById("descripcion").value = palabra.descripcion || "";
-  document.getElementById("enlaces").value = palabra.enlaces || "";
   document.getElementById("imagen").value = "";
+
+  limpiarCamposEnlaces();
+  try {
+    const enlaces = JSON.parse(palabra.enlaces || "[]");
+    enlaces.forEach(link => agregarCampoEnlace(link.url, link.texto));
+  } catch {
+    agregarCampoEnlace();
+  }
 
   editandoID = palabra.id;
   mostrarSeccion("agregar");
@@ -134,18 +141,24 @@ function guardar() {
   const espanol = document.getElementById("espanol").value.trim();
   const categoriaSeleccionada = document.getElementById("categoria-select").value;
   const categoriaNueva = document.getElementById("categoria-nueva").value.trim();
-  const categoria =
-    categoriaSeleccionada === "otra" ? categoriaNueva : categoriaSeleccionada;
+  const categoria = categoriaSeleccionada === "otra" ? categoriaNueva : categoriaSeleccionada;
   const notas = document.getElementById("notas").value.trim();
   const descripcion = document.getElementById("descripcion").value.trim();
-  const enlaces = document.getElementById("enlaces").value.trim();
-  // const imagen = document.getElementById("imagen").files[0]; // aún no usado
+  const imagen = document.getElementById("imagen").files[0]; // (opcional)
+
+  const enlaces = [];
+  document.querySelectorAll(".campo-enlace").forEach(contenedor => {
+    const url = contenedor.querySelector(".input-url").value.trim();
+    const texto = contenedor.querySelector(".input-texto").value.trim();
+    if (url) {
+      enlaces.push({ url, texto });
+    }
+  });
 
   if (!reo || !espanol) {
     return mostrarError("Reo Tahiti y Español son obligatorios.");
   }
 
-  // Duplicados solo si agregando
   if (!editandoID) {
     const dup = palabrasCache.find(
       (p) =>
@@ -167,7 +180,9 @@ function guardar() {
     espanol
   )}&categoria=${encodeURIComponent(categoria)}&notas=${encodeURIComponent(
     notas
-  )}&descripcion=${encodeURIComponent(descripcion)}&enlaces=${encodeURIComponent(enlaces)}`;
+  )}&descripcion=${encodeURIComponent(descripcion)}&enlaces=${encodeURIComponent(
+    JSON.stringify(enlaces)
+  )}`;
 
   if (editandoID) url += `&accion=editar&id=${editandoID}`;
 
@@ -205,6 +220,23 @@ function eliminar(id) {
     });
 }
 
+function limpiarCamposEnlaces() {
+  document.getElementById("contenedor-enlaces").innerHTML = "";
+  agregarCampoEnlace();
+}
+
+function agregarCampoEnlace(url = "", texto = "") {
+  const contenedor = document.getElementById("contenedor-enlaces");
+  const grupo = document.createElement("div");
+  grupo.className = "campo-enlace";
+  grupo.innerHTML = `
+    <input type="text" class="input-url" placeholder="URL" value="${url}" />
+    <input type="text" class="input-texto" placeholder="Texto del enlace" value="${texto}" />
+    <button onclick="this.parentNode.remove()">❌</button>
+  `;
+  contenedor.appendChild(grupo);
+}
+
 function limpiarFormulario() {
   document.getElementById("reo").value = "";
   document.getElementById("espanol").value = "";
@@ -213,11 +245,11 @@ function limpiarFormulario() {
   document.getElementById("categoria-nueva").classList.add("oculto");
   document.getElementById("notas").value = "";
   document.getElementById("descripcion").value = "";
-  document.getElementById("enlaces").value = "";
   document.getElementById("imagen").value = "";
+  limpiarCamposEnlaces();
   document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
   editandoID = null;
-  //clearMensajes();
+  // NO se borran notificaciones inmediatamente
 }
 
 let cuentaRegresivaTimeout;

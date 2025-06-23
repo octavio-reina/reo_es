@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
- 
+
   if (document.getElementById("resultados")) {
     cargarDatos();
   }
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     buscador.addEventListener("input", filtrarPalabras);
   }
 
-  
   // Menú hamburguesa
   const toggles = document.querySelectorAll("#menu-toggle");
   const menu = document.getElementById("menu");
@@ -49,10 +48,7 @@ function cargarDatos() {
     header: true,
     complete: function(results) {
       palabras = results.data;
-
-      // Ordenar alfabéticamente antes de mostrar
       ordenarAlfabeticamente(palabras);
-
       mostrarPalabras(palabras);
     },
     error: function(err) {
@@ -65,12 +61,9 @@ function ordenarAlfabeticamente(lista) {
   lista.sort((a, b) => {
     const strA = (a["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const strB = (b["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    // Usar localeCompare con sensibilidad base para ignorar acentos y diacríticos
     return strA.localeCompare(strB, 'es', { sensitivity: 'base' });
   });
 }
-
 
 function filtrarPalabras() {
   const query = document.getElementById("buscador").value.toLowerCase();
@@ -128,10 +121,10 @@ function mostrarPalabras(lista) {
     }
 
     if (palabra["Descripción"]) {
-     const descripcion = document.createElement("p");
-     const textoConSaltos = palabra["Descripción"].replace(/\n/g, "<br>");
-     descripcion.innerHTML = `<strong>Descripción:</strong><br>${textoConSaltos}`;
-     contenido.appendChild(descripcion);
+      const descripcion = document.createElement("p");
+      const textoConSaltos = palabra["Descripción"].replace(/\n/g, "<br>");
+      descripcion.innerHTML = `<strong>Descripción:</strong><br>${textoConSaltos}`;
+      contenido.appendChild(descripcion);
     }
 
     if (palabra["Imagen"]) {
@@ -142,36 +135,41 @@ function mostrarPalabras(lista) {
     }
 
     if (palabra["Enlaces"]) {
-      const links = palabra["Enlaces"]
-        .split(",")
-        .map(e => e.trim())
-        .filter(e => e !== "");
+      try {
+        const enlaces = JSON.parse(palabra["Enlaces"]);
+        if (Array.isArray(enlaces) && enlaces.length > 0) {
+          const titulo = document.createElement("p");
+          titulo.innerHTML = "<strong>Referencias:</strong>";
 
-      if (links.length > 0) {
-        const titulo = document.createElement("p");
-        titulo.innerHTML = "<strong>Referencias:</strong>";
+          const listaEnlaces = document.createElement("ul");
+          enlaces.forEach(enlace => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = enlace.url;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.textContent = enlace.texto || enlace.url;
+            li.appendChild(a);
+            listaEnlaces.appendChild(li);
+          });
 
-        const listaEnlaces = document.createElement("ul");
-        listaEnlaces.innerHTML = links.map(link =>
-          `<li><a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></li>`
-        ).join("");
-
-        contenido.appendChild(titulo);
-        contenido.appendChild(listaEnlaces);
+          contenido.appendChild(titulo);
+          contenido.appendChild(listaEnlaces);
+        }
+      } catch (e) {
+        console.warn("❌ Error al parsear enlaces:", palabra["Enlaces"]);
       }
     }
 
     cabecera.addEventListener("click", () => {
       const yaEstaVisible = contenido.classList.contains("visible");
 
-      // Cierra la tarjeta abierta si existe
       if (tarjetaAbierta && tarjetaAbierta !== contenido) {
         tarjetaAbierta.classList.remove("visible");
         const reoActivo = tarjetaAbierta.parentElement.querySelector(".reo-tahiti.activo");
         if (reoActivo) reoActivo.classList.remove("activo");
       }
 
-      // Si no era la misma, ábrela; si sí, solo cierra
       if (!yaEstaVisible) {
         contenido.classList.add("visible");
         reoTahiti.classList.add("activo");

@@ -15,7 +15,12 @@ body {
   padding: 1rem;
 }
 
-/* Sticky header (título + nav) */
+/* OCULTO */
+.oculto {
+  display: none !important;
+}
+
+/* Sticky header */
 .sticky-header,
 .sticky-header nav {
   position: sticky;
@@ -25,9 +30,9 @@ body {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Espaciado interno para header y nav */
+/* Encabezado */
 .sticky-header {
-  padding: 1rem 0;
+  padding: 1rem 0 0.5rem;
   text-align: center;
 }
 
@@ -41,10 +46,10 @@ h2 {
 nav {
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
   gap: 0.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
-  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #00796b;
 }
 
 .tab-btn {
@@ -105,6 +110,15 @@ button.active-click {
   transform: scale(0.97);
 }
 
+/* LOGIN */
+#clave {
+  margin-bottom: 2rem;
+}
+
+#clave input {
+  margin-bottom: 0.5rem;
+}
+
 /* ESTADO Y ERROR */
 #estado,
 #error {
@@ -123,7 +137,6 @@ button.active-click {
 }
 
 /* TABLA */
-
 #gestionar {
   margin-bottom: 1rem;
 }
@@ -155,7 +168,7 @@ th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 88px;
+  top: 104px; /* header + nav (56px + padding extra) */
   z-index: 10;
 }
 
@@ -170,21 +183,11 @@ th.acciones {
   white-space: nowrap;
 }
 
-/* Botones en tabla */
-td button {
-  margin-right: 0.3rem;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.95rem;
-  border-radius: 4px;
-  border: none;
-  background-color: #00796b;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-td button:hover {
-  background-color: #005a4f;
+/* Botones en tabla apilados */
+td.acciones button {
+  display: block;
+  margin-bottom: 0.3rem;
+  width: 100%;
 }
 
 /* Buscador */
@@ -345,9 +348,9 @@ button.ver-enlaces:hover {
   .tabla-contenedor {
     overflow-x: auto;
   }
-}
 
-/* 👇 ESTA CLASE FALTABA */
-.oculto {
-  display: none !important;
+  td.acciones button {
+    font-size: 0.85rem;
+    padding: 0.3rem;
+  }
 }

@@ -45,7 +45,9 @@ function cargarTabla() {
   fetch(URL_BASE + "?accion=leer")
     .then((res) => res.json())
     .then((data) => {
-      palabrasOriginales = [...data];  // Guarda copia completa
+     palabrasOriginales = [...data].sort((a, b) =>
+  a.reo.localeCompare(b.reo, "es", { sensitivity: "base" })
+);
       palabrasCache = [...palabrasOriginales];
       cargarCategorias();
       paginaActual = 1;

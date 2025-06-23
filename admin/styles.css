@@ -38,18 +38,15 @@ body {
 }
 
 .btn-salir {
-  background-color: #c62828;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  z-index: 110;
+    background-color: hsl(239.87deg 75.6% 8%);
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: x-small;
 }
 
 .btn-salir:hover {

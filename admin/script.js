@@ -6,16 +6,22 @@ let palabrasCache = [];
 let paginaActual = 1;
 const TAMANIO_PAGINA = 10;
 
-
 function verificarClave() {
-  if (document.getElementById("codigo").value.trim() === CLAVE_SECRETA) {
-    document.getElementById("clave").classList.add("oculto");
-    document.getElementById("admin").classList.remove("oculto");
-    cargarTabla();
+  const claveIngresada = document.getElementById("codigo").value.trim();
+  if (claveIngresada === CLAVE_SECRETA) {
+    localStorage.setItem("claveValida", "true");
+    mostrarAdmin();
   } else {
     alert("Clave incorrecta.");
   }
 }
+
+function mostrarAdmin() {
+  document.getElementById("clave").classList.add("oculto");
+  document.getElementById("admin").classList.remove("oculto");
+  cargarTabla();
+}
+
 
 
 function mostrarSeccion(seccion) {
@@ -393,3 +399,15 @@ function clearMensajes() {
   document.getElementById("estado").textContent = "";
   document.getElementById("error").textContent = "";
 }
+
+function cerrarSesion() {
+  localStorage.removeItem("claveValida");
+  location.reload();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem("claveValida") === "true") {
+    mostrarAdmin();
+  }
+});
+

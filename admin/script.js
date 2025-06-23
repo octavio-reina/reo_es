@@ -19,6 +19,7 @@ function verificarClave() {
 function mostrarAdmin() {
   document.getElementById("clave").classList.add("oculto");
   document.getElementById("admin").classList.remove("oculto");
+  
   cargarTabla();
 }
 

@@ -60,13 +60,16 @@
 
     <!-- Sección Gestionar -->
     <div id="gestionar" class="oculto">
-      <input
-        type="text"
-        id="busqueda"
-        placeholder="Buscar..."
-        oninput="filtrarTabla()"
-        autocomplete="off"
-      />
+     <div class="busqueda-sticky">
+  <input
+    type="text"
+    id="busqueda"
+    placeholder="Buscar..."
+    oninput="filtrarTabla()"
+    autocomplete="off"
+  />
+</div>
+
 
       <div class="tabla-contenedor">
         <table id="tabla">

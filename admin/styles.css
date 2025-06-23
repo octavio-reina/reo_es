@@ -147,6 +147,50 @@ td button:hover {
   margin-bottom: 1rem;
 }
 
+/* ENLACES DINÁMICOS */
+#contenedor-enlaces {
+  margin-bottom: 1rem;
+}
+
+.link-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.link-row input[type="url"],
+.link-row input[type="text"] {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.btn-remove-link {
+  background: #d32f2f;
+  color: white;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-link:hover {
+  background-color: #b71c1c;
+}
+
+#btn-add-link {
+  margin-bottom: 1rem;
+  background-color: #009688;
+}
+
+#btn-add-link:hover {
+  background-color: #00796b;
+}
+
 /* RESPONSIVE */
 @media (max-width: 600px) {
   body {
@@ -159,5 +203,15 @@ td button:hover {
 
   th, td {
     font-size: 0.9rem;
+  }
+
+  .link-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-remove-link {
+    width: 100%;
+    height: auto;
   }
 }

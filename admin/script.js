@@ -8,13 +8,14 @@ const TAMANIO_PAGINA = 10;
 
 function verificarClave() {
   if (document.getElementById("codigo").value.trim() === CLAVE_SECRETA) {
-    document.getElementById("clave").style.display = "none";
+    document.getElementById("clave").classList.add("oculto");
     document.getElementById("admin").classList.remove("oculto");
     cargarTabla();
   } else {
     alert("Clave incorrecta.");
   }
 }
+
 
 function mostrarSeccion(seccion) {
   document.querySelectorAll(".tab-btn").forEach((btn) =>

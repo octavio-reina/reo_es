@@ -35,6 +35,22 @@
   border-bottom: 2px solid #00796b;
 }
 
+/* Buscador dentro del header */
+#busqueda {
+  width: 90%;
+  max-width: 600px;
+  margin: 1rem 0 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  display: none;
+}
+
+#busqueda.visible {
+  display: block;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -50,26 +66,12 @@ body {
   display: none !important;
 }
 
-/* BUSCADOR STICKY */
-.busqueda-sticky {
-  position: sticky;
-  top: 220px; /* justo debajo del header fijo */
-  background: white;
-  z-index: 1050;
-  padding: 0.5rem 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-}
-
-#busqueda {
-  margin-bottom: 1rem;
-}
-
 /* STICKY HEADERS EN TABLA */
 th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 260px; /* 220 header + ~40 buscador */
+  top: 270px; /* 220 header + 50 buscador */
   z-index: 1000;
 }
 

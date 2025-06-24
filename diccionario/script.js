@@ -1,84 +1,3 @@
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
-
-let palabras = [];
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/reo_es/service-worker.js')
-      .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
-      .catch(err => console.error("❌ Error al registrar Service Worker:", err));
-  });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  if (document.getElementById("resultados")) {
-    cargarDatos();
-  }
-
-  const buscador = document.getElementById("buscador");
-  if (buscador) {
-    buscador.addEventListener("input", filtrarPalabras);
-  }
-
-  const toggles = document.querySelectorAll("#menu-toggle");
-  const menu = document.getElementById("menu");
-  const close = document.getElementById("menu-close");
-
-  toggles.forEach(toggle => {
-    toggle.addEventListener("click", () => {
-      menu.classList.add("activo");
-      document.body.classList.add("menu-abierto");
-    });
-  });
-
-  if (close) {
-    close.addEventListener("click", () => {
-      menu.classList.remove("activo");
-      document.body.classList.remove("menu-abierto");
-    });
-  }
-});
-
-function cargarDatos() {
-  Papa.parse(CSV_URL, {
-    download: true,
-    header: true,
-    complete: function(results) {
-      palabras = results.data;
-      ordenarAlfabeticamente(palabras);
-      mostrarPalabras(palabras);
-    },
-    error: function(err) {
-      document.getElementById("resultados").innerHTML = `<p>Error al cargar datos: ${err.message}</p>`;
-    }
-  });
-}
-
-function ordenarAlfabeticamente(lista) {
-  lista.sort((a, b) => {
-    const strA = (a["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const strB = (b["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return strA.localeCompare(strB, 'es', { sensitivity: 'base' });
-  });
-}
-
-function filtrarPalabras() {
-  const normalizar = (txt) =>
-    (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-  const query = normalizar(document.getElementById("buscador").value);
-
-  const filtradas = palabras.filter(p =>
-    normalizar(p["Reo Tahiti"]).includes(query) ||
-    normalizar(p["Español"]).includes(query) ||
-    normalizar(p["Categoría"]).includes(query)
-  );
-
-  mostrarPalabras(filtradas);
-}
-
-
 function mostrarPalabras(lista) {
   const container = document.getElementById("resultados");
   container.innerHTML = "";
@@ -89,6 +8,7 @@ function mostrarPalabras(lista) {
   }
 
   let tarjetaAbierta = null;
+  const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
 
   lista.forEach(palabra => {
     const tarjeta = document.createElement("div");
@@ -101,12 +21,76 @@ function mostrarPalabras(lista) {
     reoTahiti.className = "reo-tahiti";
     reoTahiti.textContent = palabra["Reo Tahiti"];
 
+    const acciones = document.createElement("div");
+    acciones.className = "acciones-tarjeta";
+
+    // Copiar palabra
+    const btnCopiar = document.createElement("button");
+    btnCopiar.innerHTML = "📋";
+    btnCopiar.title = "Copiar palabra";
+    btnCopiar.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(palabra["Reo Tahiti"]);
+      btnCopiar.innerHTML = "✅";
+      setTimeout(() => (btnCopiar.innerHTML = "📋"), 1000);
+    };
+    acciones.appendChild(btnCopiar);
+
+    // Favorito
+    const btnFav = document.createElement("button");
+    const id = palabra["Reo Tahiti"]; // se asume como clave única
+    btnFav.innerHTML = favoritos.includes(id) ? "⭐" : "☆";
+    btnFav.title = "Agregar a favoritos";
+    btnFav.onclick = (e) => {
+      e.stopPropagation();
+      if (favoritos.includes(id)) {
+        const i = favoritos.indexOf(id);
+        favoritos.splice(i, 1);
+        btnFav.innerHTML = "☆";
+      } else {
+        favoritos.push(id);
+        btnFav.innerHTML = "⭐";
+      }
+      localStorage.setItem("favoritos", JSON.stringify(favoritos));
+    };
+    acciones.appendChild(btnFav);
+
+    // Compartir palabra
+    const btnShare = document.createElement("button");
+    btnShare.innerHTML = "📤";
+    btnShare.title = "Compartir";
+    btnShare.onclick = (e) => {
+      e.stopPropagation();
+      const texto = `📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`;
+      if (navigator.share) {
+        navigator.share({ text: texto });
+      } else {
+        navigator.clipboard.writeText(texto);
+        alert("Texto copiado para compartir.");
+      }
+    };
+    acciones.appendChild(btnShare);
+
+    // Reproducir audio
+    if (palabra["Audio"]) {
+      const btnAudio = document.createElement("button");
+      btnAudio.innerHTML = "🔊";
+      btnAudio.title = "Reproducir audio";
+      btnAudio.onclick = (e) => {
+        e.stopPropagation();
+        const audio = new Audio(palabra["Audio"]);
+        audio.play().catch(err => console.error("No se pudo reproducir:", err));
+      };
+      acciones.appendChild(btnAudio);
+    }
+
     const espanol = document.createElement("div");
     espanol.className = "espanol";
     espanol.textContent = palabra["Español"];
 
     cabecera.appendChild(reoTahiti);
     cabecera.appendChild(espanol);
+    cabecera.appendChild(acciones);
 
     if (palabra["Categoría"]) {
       const categoria = document.createElement("div");

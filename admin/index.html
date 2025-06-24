@@ -26,13 +26,14 @@
      <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
     <div id="estado"></div>
     <div id="error"></div>
-     <input
-    type="text"
-    id="busqueda"
-    placeholder="Buscar..."
-    oninput="filtrarTabla()"
-    autocomplete="off"
-  />
+   <input
+  type="text"
+  id="busqueda"
+  class="oculto" <!-- 👈 esta clase -->
+  placeholder="Buscar..."
+  oninput="filtrarTabla()"
+  autocomplete="off"
+/>
     </header>
     <!-- Sección Agregar -->
     <div id="agregar">

@@ -3,6 +3,7 @@ const URL_BASE = "https://script.google.com/macros/s/AKfycbyI0EZvG_lOfDIFSk5EsKs
 
 let editandoID = null;
 let palabrasCache = [];
+let palabrasOriginales = [];
 let paginaActual = 1;
 const TAMANIO_PAGINA = 10;
 
@@ -19,11 +20,8 @@ function verificarClave() {
 function mostrarAdmin() {
   document.getElementById("clave").classList.add("oculto");
   document.getElementById("admin").classList.remove("oculto");
-  
   cargarTabla();
 }
-
-
 
 function mostrarSeccion(seccion) {
   document.querySelectorAll(".tab-btn").forEach((btn) =>
@@ -37,17 +35,24 @@ function mostrarSeccion(seccion) {
     .querySelector(`.tab-btn[onclick*='${seccion}']`)
     .classList.add("active");
   clearMensajes();
-}
 
-let palabrasOriginales = []; // 👈 nueva variable global
+  // Mostrar u ocultar buscador según sección
+  const buscador = document.getElementById("busqueda");
+  if (seccion === "gestionar") {
+    buscador.classList.remove("oculto");
+  } else {
+    buscador.classList.add("oculto");
+    buscador.value = "";
+  }
+}
 
 function cargarTabla() {
   fetch(URL_BASE + "?accion=leer")
     .then((res) => res.json())
     .then((data) => {
-     palabrasOriginales = [...data].sort((a, b) =>
-  a.reo.localeCompare(b.reo, "es", { sensitivity: "base" })
-);
+      palabrasOriginales = [...data].sort((a, b) =>
+        a.reo.localeCompare(b.reo, "es", { sensitivity: "base" })
+      );
       palabrasCache = [...palabrasOriginales];
       cargarCategorias();
       paginaActual = 1;
@@ -112,13 +117,7 @@ function renderizarTabla() {
       <td>
         ${
           palabra.imagen
-            ? `<img 
-                src="${palabra.imagen}" 
-                alt="Imagen de ${palabra.reo}" 
-                class="miniatura" 
-                loading="lazy"
-                width="200" height="200"
-              />`
+            ? `<img src="${palabra.imagen}" alt="Imagen de ${palabra.reo}" class="miniatura" loading="lazy" width="200" height="200" />`
             : "—"
         }
       </td>
@@ -131,7 +130,7 @@ function renderizarTabla() {
       </td>
       <td class="acciones">
         <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
-        <button onclick='eliminar(${palabra.reo})'>🗑️</button>
+        <button onclick='eliminar(${JSON.stringify(palabra.reo)})'>🗑️</button>
       </td>
     `;
 
@@ -182,7 +181,6 @@ function filtrarTabla() {
   paginaActual = 1;
   renderizarTabla();
 }
-
 
 function editar(palabra) {
   document.getElementById("reo").value = palabra.reo;
@@ -242,13 +240,9 @@ function cargarCategorias() {
   mostrarInputCategoria();
 }
 
-function efectoClick(btn) {
+function handleGuardar(btn) {
   btn.classList.add("active-click");
   setTimeout(() => btn.classList.remove("active-click"), 300);
-}
-
-function handleGuardar(btn) {
-  efectoClick(btn);
   guardar();
 }
 
@@ -396,13 +390,16 @@ function mostrarError(mensaje) {
   error.classList.add("visible");
   setTimeout(() => {
     error.textContent = "";
+    error.classList.remove("visible");
   }, 7000);
 }
 
 function clearMensajes() {
   clearInterval(cuentaRegresivaTimeout);
   document.getElementById("estado").textContent = "";
+  document.getElementById("estado").classList.remove("visible");
   document.getElementById("error").textContent = "";
+  document.getElementById("error").classList.remove("visible");
 }
 
 function cerrarSesion() {
@@ -415,4 +412,3 @@ document.addEventListener("DOMContentLoaded", () => {
     mostrarAdmin();
   }
 });
-

@@ -36,7 +36,6 @@ function mostrarSeccion(seccion) {
     .classList.add("active");
   clearMensajes();
 
-  // Mostrar u ocultar buscador según sección
   const buscador = document.getElementById("busqueda");
   if (seccion === "gestionar") {
     buscador.classList.remove("oculto");
@@ -50,6 +49,11 @@ function cargarTabla() {
   fetch(URL_BASE + "?accion=leer")
     .then((res) => res.json())
     .then((data) => {
+      data.forEach((p) => {
+        if (!p.id) {
+          p.id = `reo.id.${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+        }
+      });
       palabrasOriginales = [...data].sort((a, b) =>
         a.reo.localeCompare(b.reo, "es", { sensitivity: "base" })
       );
@@ -130,7 +134,7 @@ function renderizarTabla() {
       </td>
       <td class="acciones">
         <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
-        <button onclick='eliminar(${JSON.stringify(palabra.reo)})'>🗑️</button>
+        <button onclick='eliminar("${palabra.id}")'>🗑️</button>
       </td>
     `;
 
@@ -147,10 +151,7 @@ function renderizarTabla() {
 function renderizarPaginacion() {
   const totalPaginas = Math.ceil(palabrasCache.length / TAMANIO_PAGINA);
   const contenedor = document.getElementById("paginacion");
-  if (!contenedor) return;
-
   contenedor.innerHTML = "";
-
   if (totalPaginas <= 1) return;
 
   for (let i = 1; i <= totalPaginas; i++) {
@@ -200,7 +201,7 @@ function editar(palabra) {
     agregarCampoEnlace();
   }
 
-  editandoID = palabra.reo;
+  editandoID = palabra.id; // ✅ usar id, no reo
   mostrarSeccion("agregar");
   document.getElementById("titulo-form").textContent = `Editando: "${palabra.reo}" (${palabra.espanol})`;
   clearMensajes();
@@ -271,32 +272,10 @@ function guardar() {
     return mostrarError("Reo Tahiti y Español son obligatorios.");
   }
 
-  if (!editandoID) {
-    const dup = palabrasCache.find(
-      (p) =>
-        p.reo.toLowerCase() === reo.toLowerCase() ||
-        p.espanol.toLowerCase() === espanol.toLowerCase()
-    );
-    if (dup) {
-      const confirmar = confirm(
-        `¡Atención! Se encontró una palabra duplicada:\nReo Tahiti: ${dup.reo}\nEspañol: ${dup.espanol}\n\n¿Quieres agregar igual? (Aceptar)\n¿O prefieres editar la palabra existente? (Cancelar)`
-      );
-      if (!confirmar) {
-        editar(dup);
-        return;
-      }
-    }
-  }
+  // Asignar ID único si no estamos editando
+  const id = editandoID || `reo.id.${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
-  let url = `${URL_BASE}?reo=${encodeURIComponent(reo)}&espanol=${encodeURIComponent(
-    espanol
-  )}&categoria=${encodeURIComponent(categoria)}&notas=${encodeURIComponent(
-    notas
-  )}&descripcion=${encodeURIComponent(descripcion)}&imagen=${encodeURIComponent(
-    imagen
-  )}&enlaces=${encodeURIComponent(JSON.stringify(enlaces))}`;
-
-  if (editandoID) url += `&accion=editar&id=${editandoID}`;
+  let url = `${URL_BASE}?accion=${editandoID ? "editar" : "agregar"}&id=${encodeURIComponent(id)}&reo=${encodeURIComponent(reo)}&espanol=${encodeURIComponent(espanol)}&categoria=${encodeURIComponent(categoria)}&notas=${encodeURIComponent(notas)}&descripcion=${encodeURIComponent(descripcion)}&imagen=${encodeURIComponent(imagen)}&enlaces=${encodeURIComponent(JSON.stringify(enlaces))}`;
 
   fetch(url)
     .then((res) => res.text())
@@ -317,7 +296,7 @@ function guardar() {
 function eliminar(id) {
   clearMensajes();
   if (!confirm("¿Eliminar esta palabra?")) return;
-  fetch(`${URL_BASE}?accion=eliminar&id=${id}`)
+  fetch(`${URL_BASE}?accion=eliminar&id=${encodeURIComponent(id)}`)
     .then((res) => res.text())
     .then((data) => {
       if (data.trim() === "OK") {

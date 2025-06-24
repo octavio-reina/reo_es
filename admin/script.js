@@ -167,21 +167,27 @@ function renderizarPaginacion() {
 }
 
 function filtrarTabla() {
-  const query = document.getElementById("busqueda").value.toLowerCase();
+  const query = document.getElementById("busqueda").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (!query) {
     palabrasCache = [...palabrasOriginales];
   } else {
-    palabrasCache = palabrasOriginales.filter(p => (
-      p.reo?.toLowerCase().includes(query) ||
-      p.espanol?.toLowerCase().includes(query) ||
-      p.categoria?.toLowerCase().includes(query) ||
-      p.notas?.toLowerCase().includes(query) ||
-      p.descripcion?.toLowerCase().includes(query)
-    ));
+    palabrasCache = palabrasOriginales.filter(p => {
+      const normalizar = (txt) =>
+        (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+      return (
+        normalizar(p.reo).includes(query) ||
+        normalizar(p.espanol).includes(query) ||
+        normalizar(p.categoria).includes(query) ||
+        normalizar(p.notas).includes(query) ||
+        normalizar(p.descripcion).includes(query)
+      );
+    });
   }
   paginaActual = 1;
   renderizarTabla();
 }
+
 
 function editar(palabra) {
   document.getElementById("reo").value = palabra.reo;

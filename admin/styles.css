@@ -7,7 +7,7 @@
 
 /* MARGIN compensatorio para el header fijo */
 #admin {
-  margin-top: 220px;
+  margin-top: 200px;
 }
 
 /* HEADER FIJO COMO EN EL DICCIONARIO */
@@ -38,14 +38,12 @@
 /* Buscador dentro del header */
 #busqueda {
   width: 90%;
-  max-width: 600px;
   margin: 1rem 0 0.5rem;
   padding: 0.6rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
-  display: none;
-}
+ }
 
 #busqueda.visible {
   display: block;
@@ -212,6 +210,8 @@ button.active-click {
 /* TABLA */
 #gestionar {
   margin-bottom: 1rem;
+  position: relative;
+    top: 50px;
 }
 
 .tabla-contenedor {

@@ -320,6 +320,21 @@ main {
   flex-grow: 1;
 }
 
+.filtros-barra {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem auto 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filtros-barra label,
+.filtros-barra select {
+  font-size: 0.95rem;
+  color: #333;
+}
+
 
 /* Responsive */
 @media (max-width: 600px) {

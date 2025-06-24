@@ -272,6 +272,26 @@ function guardar() {
     return mostrarError("Reo Tahiti y Español son obligatorios.");
   }
 
+ // ✅ Validación de duplicados si no estamos editando
+  if (!editandoID) {
+    const dup = palabrasOriginales.find(
+      (p) =>
+        p.reo.trim().toLowerCase() === reo.toLowerCase() ||
+        p.espanol.trim().toLowerCase() === espanol.toLowerCase()
+    );
+    if (dup) {
+      const confirmar = confirm(
+        `¡Atención! Ya existe una palabra parecida:\n\n` +
+        `Reo Tahiti: ${dup.reo}\nEspañol: ${dup.espanol}\n\n` +
+        `¿Deseas agregarla de todas formas?\nAceptar: Agregar de todas formas\nCancelar: Editar la palabra existente`
+      );
+      if (!confirmar) {
+        editar(dup);
+        return;
+      }
+    }
+  }
+  
   // Asignar ID único si no estamos editando
   const id = editandoID || `reo.id.${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 

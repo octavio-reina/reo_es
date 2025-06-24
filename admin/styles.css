@@ -81,7 +81,7 @@ td.sticky-col {
   position: sticky;
   left: 0;
   background: #e0f2f1;
-  z-index: 1001;
+  z-index: 1021;
   box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
 }
 
@@ -92,7 +92,7 @@ th.acciones {
   right: 0;
   background: white;
   box-shadow: -3px 0 5px -2px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
+  z-index: 1021;
   white-space: nowrap;
 }
 

@@ -64,14 +64,20 @@ function ordenarAlfabeticamente(lista) {
 }
 
 function filtrarPalabras() {
-  const query = document.getElementById("buscador").value.toLowerCase();
+  const normalizar = (txt) =>
+    (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  const query = normalizar(document.getElementById("buscador").value);
+
   const filtradas = palabras.filter(p =>
-    (p["Reo Tahiti"] || "").toLowerCase().includes(query) ||
-    (p["Español"] || "").toLowerCase().includes(query) ||
-    (p["Categoría"] || "").toLowerCase().includes(query)
+    normalizar(p["Reo Tahiti"]).includes(query) ||
+    normalizar(p["Español"]).includes(query) ||
+    normalizar(p["Categoría"]).includes(query)
   );
+
   mostrarPalabras(filtradas);
 }
+
 
 function mostrarPalabras(lista) {
   const container = document.getElementById("resultados");

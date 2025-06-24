@@ -71,8 +71,8 @@ th {
   background-color: #e0f2f1;
   color: #00796b;
   position: sticky;
-  top: 270px; /* 220 header + 50 buscador */
-  z-index: 1000;
+  top: 0px; /* 220 header + 50 buscador */
+  z-index: 1011;
 }
 
 /* Sticky columna izquierda (Reo Tahiti) */

@@ -164,17 +164,24 @@ function mostrarPalabras(lista) {
     };
     acciones.appendChild(btnShare);
 
-    // Copiar
-    const btnCopiar = document.createElement("button");
-    btnCopiar.innerHTML = "📋";
-    btnCopiar.title = "Copiar palabra";
-    btnCopiar.onclick = (e) => {
-      e.stopPropagation();
-      navigator.clipboard.writeText(palabra["Reo Tahiti"]);
-      btnCopiar.innerHTML = "✅";
-      setTimeout(() => (btnCopiar.innerHTML = "📋"), 1000);
-    };
-    acciones.appendChild(btnCopiar);
+     // Copiar
+const btnCopiar = document.createElement("button");
+btnCopiar.innerHTML = "📋";
+btnCopiar.title = "Copiar palabra";
+btnCopiar.setAttribute("aria-label", `Copiar la palabra ${palabra["Reo Tahiti"]}`);
+btnCopiar.onclick = (e) => {
+  e.stopPropagation();
+  navigator.clipboard.writeText(palabra["Reo Tahiti"]).then(() => {
+    btnCopiar.innerHTML = "✅";
+    btnCopiar.title = "Copiado ✅";
+    setTimeout(() => {
+      btnCopiar.innerHTML = "📋";
+      btnCopiar.title = "Copiar palabra";
+    }, 1000);
+  });
+};
+acciones.appendChild(btnCopiar);
+
 
     // Favorito
     const btnFav = document.createElement("button");

@@ -1,3 +1,119 @@
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
+
+let palabras = [];
+let categoriaActual = "todas";
+let mostrarFavoritos = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/reo_es/service-worker.js')
+      .then(reg => console.log("✅ Service Worker registrado:", reg.scope))
+      .catch(err => console.error("❌ Error al registrar Service Worker:", err));
+  }
+
+  if (document.getElementById("resultados")) {
+    cargarDatos();
+  }
+
+  const buscador = document.getElementById("buscador");
+  if (buscador) {
+    buscador.addEventListener("input", filtrarPalabras);
+  }
+
+  const filtros = document.getElementById("filtros");
+  if (filtros) {
+    filtros.addEventListener("change", filtrarPalabras);
+  }
+
+  const toggles = document.querySelectorAll("#menu-toggle");
+  const menu = document.getElementById("menu");
+  const close = document.getElementById("menu-close");
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      menu.classList.add("activo");
+      document.body.classList.add("menu-abierto");
+    });
+  });
+
+  if (close) {
+    close.addEventListener("click", () => {
+      menu.classList.remove("activo");
+      document.body.classList.remove("menu-abierto");
+    });
+  }
+});
+
+function cargarDatos() {
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    complete: function(results) {
+      palabras = results.data;
+      ordenarAlfabeticamente(palabras);
+      generarFiltros(palabras);
+      mostrarPalabras(palabras);
+    },
+    error: function(err) {
+      document.getElementById("resultados").innerHTML = `<p>Error al cargar datos: ${err.message}</p>`;
+    }
+  });
+}
+
+function ordenarAlfabeticamente(lista) {
+  lista.sort((a, b) => {
+    const strA = (a["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const strB = (b["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return strA.localeCompare(strB, 'es', { sensitivity: 'base' });
+  });
+}
+
+function generarFiltros(lista) {
+  const filtrosContainer = document.getElementById("filtros");
+  if (!filtrosContainer) return;
+
+  const categorias = Array.from(new Set(lista.map(p => p["Categoría"]).filter(Boolean))).sort();
+
+  const select = document.createElement("select");
+  select.id = "filtro-categoria";
+  select.innerHTML = `<option value="todas">Todas las categorías</option>` +
+    categorias.map(cat => `<option value="${cat}">${cat}</option>`).join("");
+  select.addEventListener("change", () => {
+    categoriaActual = select.value;
+    filtrarPalabras();
+  });
+
+  const favCheckbox = document.createElement("label");
+  favCheckbox.innerHTML = `
+    <input type="checkbox" id="filtro-favoritos">
+    Solo favoritos
+  `;
+  favCheckbox.querySelector("input").addEventListener("change", (e) => {
+    mostrarFavoritos = e.target.checked;
+    filtrarPalabras();
+  });
+
+  filtrosContainer.appendChild(select);
+  filtrosContainer.appendChild(favCheckbox);
+}
+
+function filtrarPalabras() {
+  const normalizar = txt => (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const query = normalizar(document.getElementById("buscador").value);
+  const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
+
+  const filtradas = palabras.filter(p => {
+    const enBusqueda = normalizar(p["Reo Tahiti"]).includes(query) ||
+                       normalizar(p["Español"]).includes(query) ||
+                       normalizar(p["Categoría"]).includes(query);
+    const enFavoritos = !mostrarFavoritos || favoritos.includes(p["Reo Tahiti"]);
+    const enCategoria = categoriaActual === "todas" || p["Categoría"] === categoriaActual;
+    return enBusqueda && enFavoritos && enCategoria;
+  });
+
+  mostrarPalabras(filtradas);
+}
+
 function mostrarPalabras(lista) {
   const container = document.getElementById("resultados");
   container.innerHTML = "";
@@ -17,45 +133,22 @@ function mostrarPalabras(lista) {
     const cabecera = document.createElement("div");
     cabecera.className = "cabecera";
 
+    const filaTop = document.createElement("div");
+    filaTop.style.display = "flex";
+    filaTop.style.alignItems = "center";
+    filaTop.style.justifyContent = "space-between";
+    filaTop.style.flexWrap = "wrap";
+
     const reoTahiti = document.createElement("div");
     reoTahiti.className = "reo-tahiti";
     reoTahiti.textContent = palabra["Reo Tahiti"];
 
     const acciones = document.createElement("div");
     acciones.className = "acciones-tarjeta";
+    acciones.style.display = "flex";
+    acciones.style.gap = "0.6rem";
 
-    // Copiar palabra
-    const btnCopiar = document.createElement("button");
-    btnCopiar.innerHTML = "📋";
-    btnCopiar.title = "Copiar palabra";
-    btnCopiar.onclick = (e) => {
-      e.stopPropagation();
-      navigator.clipboard.writeText(palabra["Reo Tahiti"]);
-      btnCopiar.innerHTML = "✅";
-      setTimeout(() => (btnCopiar.innerHTML = "📋"), 1000);
-    };
-    acciones.appendChild(btnCopiar);
-
-    // Favorito
-    const btnFav = document.createElement("button");
-    const id = palabra["Reo Tahiti"]; // se asume como clave única
-    btnFav.innerHTML = favoritos.includes(id) ? "⭐" : "☆";
-    btnFav.title = "Agregar a favoritos";
-    btnFav.onclick = (e) => {
-      e.stopPropagation();
-      if (favoritos.includes(id)) {
-        const i = favoritos.indexOf(id);
-        favoritos.splice(i, 1);
-        btnFav.innerHTML = "☆";
-      } else {
-        favoritos.push(id);
-        btnFav.innerHTML = "⭐";
-      }
-      localStorage.setItem("favoritos", JSON.stringify(favoritos));
-    };
-    acciones.appendChild(btnFav);
-
-    // Compartir palabra
+    // Compartir
     const btnShare = document.createElement("button");
     btnShare.innerHTML = "📤";
     btnShare.title = "Compartir";
@@ -71,7 +164,38 @@ function mostrarPalabras(lista) {
     };
     acciones.appendChild(btnShare);
 
-    // Reproducir audio
+    // Copiar
+    const btnCopiar = document.createElement("button");
+    btnCopiar.innerHTML = "📋";
+    btnCopiar.title = "Copiar palabra";
+    btnCopiar.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(palabra["Reo Tahiti"]);
+      btnCopiar.innerHTML = "✅";
+      setTimeout(() => (btnCopiar.innerHTML = "📋"), 1000);
+    };
+    acciones.appendChild(btnCopiar);
+
+    // Favorito
+    const btnFav = document.createElement("button");
+    const id = palabra["Reo Tahiti"];
+    btnFav.innerHTML = favoritos.includes(id) ? "⭐" : "☆";
+    btnFav.title = "Agregar a favoritos";
+    btnFav.onclick = (e) => {
+      e.stopPropagation();
+      if (favoritos.includes(id)) {
+        favoritos.splice(favoritos.indexOf(id), 1);
+        btnFav.innerHTML = "☆";
+      } else {
+        favoritos.push(id);
+        btnFav.innerHTML = "⭐";
+      }
+      localStorage.setItem("favoritos", JSON.stringify(favoritos));
+      filtrarPalabras(); // actualizar vista si filtro está activo
+    };
+    acciones.appendChild(btnFav);
+
+    // Audio (si existe)
     if (palabra["Audio"]) {
       const btnAudio = document.createElement("button");
       btnAudio.innerHTML = "🔊";
@@ -81,16 +205,17 @@ function mostrarPalabras(lista) {
         const audio = new Audio(palabra["Audio"]);
         audio.play().catch(err => console.error("No se pudo reproducir:", err));
       };
-      acciones.appendChild(btnAudio);
+      reoTahiti.prepend(btnAudio);
     }
+
+    filaTop.appendChild(reoTahiti);
+    filaTop.appendChild(acciones);
+    cabecera.appendChild(filaTop);
 
     const espanol = document.createElement("div");
     espanol.className = "espanol";
     espanol.textContent = palabra["Español"];
-
-    cabecera.appendChild(reoTahiti);
     cabecera.appendChild(espanol);
-    cabecera.appendChild(acciones);
 
     if (palabra["Categoría"]) {
       const categoria = document.createElement("div");
@@ -130,7 +255,6 @@ function mostrarPalabras(lista) {
         if (Array.isArray(enlaces) && enlaces.length > 0) {
           const titulo = document.createElement("p");
           titulo.innerHTML = "<strong>Referencias:</strong>";
-
           const listaEnlaces = document.createElement("ul");
           enlaces.forEach(enlace => {
             const li = document.createElement("li");
@@ -142,7 +266,6 @@ function mostrarPalabras(lista) {
             li.appendChild(a);
             listaEnlaces.appendChild(li);
           });
-
           contenido.appendChild(titulo);
           contenido.appendChild(listaEnlaces);
         }
@@ -153,13 +276,10 @@ function mostrarPalabras(lista) {
 
     cabecera.addEventListener("click", () => {
       const yaEstaVisible = contenido.classList.contains("visible");
-
       if (tarjetaAbierta && tarjetaAbierta !== contenido) {
         tarjetaAbierta.classList.remove("visible");
-        const reoActivo = tarjetaAbierta.parentElement.querySelector(".reo-tahiti.activo");
-        if (reoActivo) reoActivo.classList.remove("activo");
+        tarjetaAbierta.parentElement.querySelector(".reo-tahiti")?.classList.remove("activo");
       }
-
       if (!yaEstaVisible) {
         contenido.classList.add("visible");
         reoTahiti.classList.add("activo");

@@ -1,5 +1,6 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4TpwV3sLoeMjjFcz7NEY8n0CS4mJ12iseR8sjYI-gZ8T_kp1vOd8v2TKVjKPFFT_lW1/pub?gid=0&single=true&output=csv";
 
+//Variables
 let palabras = [];
 let categoriaActual = "todas";
 let mostrarFavoritos = false;

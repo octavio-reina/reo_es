@@ -3,6 +3,7 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTP_ja-WseSt4Tp
 let palabras = [];
 let categoriaActual = "todas";
 let mostrarFavoritos = false;
+let audioEnReproduccion = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   if ('serviceWorker' in navigator) {
@@ -66,6 +67,15 @@ function ordenarAlfabeticamente(lista) {
     const strB = (b["Reo Tahiti"] || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     return strA.localeCompare(strB, 'es', { sensitivity: 'base' });
   });
+}
+
+function extraerEnlacesTexto(jsonStr) {
+  try {
+    const enlaces = JSON.parse(jsonStr);
+    return enlaces.map(e => `${e.texto || e.url}: ${e.url}`).join("\n");
+  } catch {
+    return "";
+  }
 }
 
 function generarFiltros(lista) {
@@ -152,16 +162,23 @@ function mostrarPalabras(lista) {
     const btnShare = document.createElement("button");
     btnShare.innerHTML = "📤";
     btnShare.title = "Compartir";
-    btnShare.onclick = (e) => {
-      e.stopPropagation();
-      const texto = `📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`;
-      if (navigator.share) {
-        navigator.share({ text: texto });
-      } else {
-        navigator.clipboard.writeText(texto);
-        alert("Texto copiado para compartir.");
-      }
-    };
+   btnShare.onclick = (e) => {
+  e.stopPropagation();
+  const contenido = [
+    `📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`,
+    palabra["Categoría"] ? `📂 Categoría: ${palabra["Categoría"]}` : "",
+    palabra["Notas"] ? `📝 Notas: ${palabra["Notas"]}` : "",
+    palabra["Descripción"] ? `📖 Descripción: ${palabra["Descripción"]}` : "",
+    palabra["Enlaces"] ? `🔗 Enlaces: ${extraerEnlacesTexto(palabra["Enlaces"])}` : ""
+  ].filter(Boolean).join("\n\n");
+
+  if (navigator.share) {
+    navigator.share({ text: contenido });
+  } else {
+    navigator.clipboard.writeText(contenido);
+    alert("Texto copiado para compartir.");
+  }
+};
     acciones.appendChild(btnShare);
 
      // Copiar
@@ -204,16 +221,44 @@ acciones.appendChild(btnCopiar);
 
     // Audio (si existe)
     if (palabra["Audio"]) {
-      const btnAudio = document.createElement("button");
+  const btnAudio = document.createElement("button");
+  btnAudio.innerHTML = "🔊";
+  btnAudio.title = "Reproducir audio";
+
+  btnAudio.onclick = (e) => {
+    e.stopPropagation();
+
+    // Si ya hay un audio reproduciéndose
+    if (audioEnReproduccion) {
+      audioEnReproduccion.pause();
+      audioEnReproduccion.currentTime = 0;
+      audioEnReproduccion = null;
       btnAudio.innerHTML = "🔊";
       btnAudio.title = "Reproducir audio";
-      btnAudio.onclick = (e) => {
-        e.stopPropagation();
-        const audio = new Audio(palabra["Audio"]);
-        audio.play().catch(err => console.error("No se pudo reproducir:", err));
-      };
-      reoTahiti.prepend(btnAudio);
+      return;
     }
+
+    // Crear nuevo audio
+    const audio = new Audio(palabra["Audio"]);
+    audio.play().catch(err => console.error("No se pudo reproducir:", err));
+    audioEnReproduccion = audio;
+
+    // Cambiar ícono e indicar que se puede detener
+    btnAudio.innerHTML = "⏹️";
+    btnAudio.title = "Detener audio";
+
+    // Restaurar ícono cuando termina
+    audio.onended = () => {
+      audioEnReproduccion = null;
+      btnAudio.innerHTML = "🔊";
+      btnAudio.title = "Reproducir audio";
+    };
+  };
+
+  // 👉 Agregar al lado derecho del texto
+  reoTahiti.appendChild(btnAudio);
+}
+
 
     filaTop.appendChild(reoTahiti);
     filaTop.appendChild(acciones);

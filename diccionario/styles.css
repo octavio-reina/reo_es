@@ -21,7 +21,11 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   margin: 0;
-  padding-top: 150px; /* espacio para header fijo */
+  padding-top: 70px; /* espacio para header fijo */
+}
+
+#resultados {
+ padding-top: 90px; /* espacio para header fijo */
 }
 
 body.menu-abierto {
@@ -204,6 +208,9 @@ header h1 {
   color: #0288d1;
   user-select: none;
   transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .reo-tahiti.activo {

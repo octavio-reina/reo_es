@@ -164,13 +164,31 @@ function mostrarPalabras(lista) {
     btnShare.title = "Compartir";
    btnShare.onclick = (e) => {
   e.stopPropagation();
-  const contenido = [
-    `📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`,
-    palabra["Categoría"] ? `📂 Categoría: ${palabra["Categoría"]}` : "",
-    palabra["Notas"] ? `📝 Notas: ${palabra["Notas"]}` : "",
-    palabra["Descripción"] ? `📖 Descripción: ${palabra["Descripción"]}` : "",
-    palabra["Enlaces"] ? `🔗 Enlaces: ${extraerEnlacesTexto(palabra["Enlaces"])}` : ""
-  ].filter(Boolean).join("\n\n");
+ const partes = [];
+
+partes.push(`📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`);
+
+if (palabra["Categoría"]) {
+  partes.push(`📂 Categoría: ${palabra["Categoría"]}`);
+}
+
+if (palabra["Notas"]) {
+  partes.push(`📝 Notas:\n${palabra["Notas"]}`);
+}
+
+if (palabra["Descripción"]) {
+  partes.push(`📖 Descripción:\n${palabra["Descripción"]}`);
+}
+
+if (palabra["Enlaces"]) {
+  const enlacesTexto = extraerEnlacesTexto(palabra["Enlaces"]);
+  if (enlacesTexto.trim() !== "") {
+    partes.push(`🔗 Enlaces:\n${enlacesTexto}`);
+  }
+}
+
+const contenido = partes.join("\n\n");
+
 
   if (navigator.share) {
     navigator.share({ text: contenido });

@@ -25,7 +25,7 @@ body {
 }
 
 #resultados {
- padding-top: 90px; /* espacio para header fijo */
+ padding-top: 100px; /* espacio para header fijo */
 }
 
 body.menu-abierto {

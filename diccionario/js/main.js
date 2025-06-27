@@ -1,5 +1,7 @@
+// main.js
 import { cargarDatos } from "./datos.js";
 import { setupUI } from "./ui.js";
+import { setupMenu } from "./menu.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if ('serviceWorker' in navigator) {
@@ -8,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("❌ Error al registrar Service Worker:", err));
   }
 
+  setupMenu();
   setupUI();
   cargarDatos();
-  
 });

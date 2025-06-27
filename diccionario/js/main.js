@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setupMenu();
   setupUI();
-  cargarDatos();
+ // ✅ Solo cargar CSV si existe el contenedor de resultados
+  if (document.getElementById("resultados")) {
+    cargarDatos();
+  }
   
 });

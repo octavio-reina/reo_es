@@ -1,6 +1,5 @@
 import { cargarDatos } from "./datos.js";
 import { setupUI } from "./ui.js";
-import { filtrarPalabras } from "./filtros.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if ('serviceWorker' in navigator) {

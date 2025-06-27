@@ -4,6 +4,7 @@ import { extraerEnlacesTexto } from "./util.js";
 export function compartirPalabra(palabra) {
   const partes = [];
 
+  
   partes.push(`📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`);
 
   if (palabra["Categoría"]) {

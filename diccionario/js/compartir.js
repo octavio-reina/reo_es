@@ -1,23 +1,36 @@
-export function extraerEnlacesTexto(jsonStr) {
-  try {
-    const enlaces = JSON.parse(jsonStr);
-    return enlaces.map(e => `${e.texto || e.url}: ${e.url}`).join("\n");
-  } catch {
-    return "";
-  }
-}
+// compartir.js
+import { extraerEnlacesTexto } from "./util.js";
 
-export function construirTextoCompartido(palabra) {
+export function compartirPalabra(palabra) {
   const partes = [];
+
   partes.push(`📘 ${palabra["Reo Tahiti"]} – ${palabra["Español"]}`);
 
-  if (palabra["Categoría"]) partes.push(`📂 Categoría: ${palabra["Categoría"]}`);
-  if (palabra["Notas"]) partes.push(`📝 Notas:\n${palabra["Notas"]}`);
-  if (palabra["Descripción"]) partes.push(`📖 Descripción:\n${palabra["Descripción"]}`);
-  if (palabra["Enlaces"]) {
-    const enlaces = extraerEnlacesTexto(palabra["Enlaces"]);
-    if (enlaces.trim()) partes.push(`🔗 Enlaces:\n${enlaces}`);
+  if (palabra["Categoría"]) {
+    partes.push(`📂 Categoría: ${palabra["Categoría"]}`);
   }
 
-  return partes.join("\n\n");
+  if (palabra["Notas"]) {
+    partes.push(`📝 Notas:\n${palabra["Notas"]}`);
+  }
+
+  if (palabra["Descripción"]) {
+    partes.push(`📖 Descripción:\n${palabra["Descripción"]}`);
+  }
+
+  if (palabra["Enlaces"]) {
+    const enlacesTexto = extraerEnlacesTexto(palabra["Enlaces"]);
+    if (enlacesTexto.trim() !== "") {
+      partes.push(`🔗 Enlaces:\n${enlacesTexto}`);
+    }
+  }
+
+  const contenido = partes.join("\n\n");
+
+  if (navigator.share) {
+    navigator.share({ text: contenido });
+  } else {
+    navigator.clipboard.writeText(contenido);
+    alert("Texto copiado para compartir.");
+  }
 }

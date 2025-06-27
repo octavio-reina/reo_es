@@ -1,5 +1,4 @@
 // favoritos.js
-
 const STORAGE_KEY = "favoritos";
 
 export function obtenerFavoritos() {

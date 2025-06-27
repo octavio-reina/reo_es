@@ -15,6 +15,34 @@ html {
   scroll-behavior: smooth;
 }
 
+.tarjeta-flotante {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  max-width: 300px;
+  background: #fff;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.cerrar-tarjeta-dia {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.btn-palabra-dia {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+
 body {
   min-height: 100vh;
   display: flex;

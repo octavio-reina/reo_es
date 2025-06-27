@@ -13,4 +13,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupMenu();
   setupUI();
   cargarDatos();
+  
 });

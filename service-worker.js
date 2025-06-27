@@ -1,11 +1,19 @@
-const CACHE_NAME = "diccionario-pwa-v18";
+const CACHE_NAME = "diccionario-pwa-v19";
 
 const urlsToCache = [
   "/reo_es/diccionario/index.html",
   "/reo_es/diccionario/contact.html",
   "/reo_es/diccionario/about.html",
   "/reo_es/diccionario/styles.css",
-  "/reo_es/diccionario/script.js",
+  "/reo_es/diccionario/js/main.js",
+  "/reo_es/diccionario/js/ui.js",
+  "/reo_es/diccionario/js/datos.js",
+  "/reo_es/diccionario/js/filtros.js",
+  "/reo_es/diccionario/js/tarjeta.js",
+  "/reo_es/diccionario/js/util.js",
+  "/reo_es/diccionario/js/favoritos.js",
+  "/reo_es/diccionario/js/audio.js",
+  "/reo_es/diccionario/js/compartir.js",
   "/reo_es/icon-256.png",
   "/reo_es/icon-512.png",
   "/reo_es/manifest.json"
@@ -13,14 +21,14 @@ const urlsToCache = [
 
 // Instalación
 self.addEventListener("install", event => {
-  console.log("Service Worker instalado");
+  console.log("✅ Service Worker instalado");
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
-  self.skipWaiting(); // fuerza actualización inmediata
+  self.skipWaiting();
 });
 
-// Activación y limpieza de cachés antiguos
+// Activación
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -31,7 +39,7 @@ self.addEventListener("activate", event => {
       )
     )
   );
-  self.clients.claim(); // toma control inmediato
+  self.clients.claim();
 });
 
 // Intercepción de peticiones

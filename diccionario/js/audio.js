@@ -1,5 +1,4 @@
 // audio.js
-
 let audioEnReproduccion = null;
 
 export function reproducirAudio(url, btnAudio) {

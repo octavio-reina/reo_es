@@ -16,5 +16,6 @@ export function setupMenu() {
       menu.classList.remove("activo");
       document.body.classList.remove("menu-abierto");
     });
+    
   }
 }

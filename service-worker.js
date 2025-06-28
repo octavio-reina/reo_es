@@ -1,4 +1,4 @@
-const CACHE_NAME = "diccionario-pwa-v22";
+const CACHE_NAME = "diccionario-pwa-v27";
 
 const urlsToCache = [
   "/reo_es/diccionario/index.html",

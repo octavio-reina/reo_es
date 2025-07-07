@@ -19,5 +19,6 @@ export function cargarDatos() {
     error: function(err) {
       document.getElementById("resultados").innerHTML = `<p>Error al cargar datos: ${err.message}</p>`;
     }
+    
   });
 }

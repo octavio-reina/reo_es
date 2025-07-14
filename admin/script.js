@@ -1,5 +1,5 @@
 const CLAVE_SECRETA = "maitaimaitai";
-const URL_BASE = "https://script.google.com/macros/s/AKfycbxKWwfnzUyzYxteXi4Wo0sDNydNh2UXZR622kMc7SYy-tOSETK3uvz_-DxfjCilU0WK/exec";
+const URL_BASE = "https://script.google.com/macros/s/AKfycbwTJffmkGv-tttDU5wJDEhwygLum7ITbENdQnhtMDONpWO6V8EHSX39lbtgnndmbT-P/exec";
 
 let editandoID = null;
 let palabrasCache = [];

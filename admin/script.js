@@ -256,6 +256,30 @@ function handleGuardar(btn) {
   guardar();
 }
 
+function transformarLinkImagen(url) {
+  if (!url) return "";
+
+  url = url.trim();
+
+  // Si es link directo a imagen
+  const extensiones = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
+  if (extensiones.some(ext => url.toLowerCase().includes(ext))) {
+    return url;
+  }
+
+  // Si es link de Google Drive
+  if (url.includes("drive.google.com")) {
+    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+    if (match && match[1]) {
+      const fileId = match[1];
+      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+  }
+
+  return url; // Devuelve el original si no se puede transformar
+}
+
+
 function guardar() {
   clearMensajes();
 
@@ -266,7 +290,8 @@ function guardar() {
   const categoria = categoriaSeleccionada === "otra" ? categoriaNueva : categoriaSeleccionada;
   const notas = document.getElementById("notas").value.trim();
   const descripcion = document.getElementById("descripcion").value.trim();
-  const imagen = document.getElementById("imagen-url").value.trim();
+  let imagen = document.getElementById("imagen-url").value.trim();
+  imagen = transformarLinkImagen(imagen);
 
   const enlaces = [];
   document.querySelectorAll(".campo-enlace").forEach(contenedor => {

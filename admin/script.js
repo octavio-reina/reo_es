@@ -410,6 +410,12 @@ function clearMensajes() {
   document.getElementById("error").classList.remove("visible");
 }
 
+function editarDesdeIndice(indice) {
+  const palabra = palabrasCache[indice];
+  if (palabra) editar(palabra);
+}
+
+
 function cerrarSesion() {
   localStorage.removeItem("claveValida");
   location.reload();

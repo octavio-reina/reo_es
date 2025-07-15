@@ -76,7 +76,7 @@ function renderizarTabla() {
   const fin = inicio + TAMANIO_PAGINA;
   const datosPagina = palabrasCache.slice(inicio, fin);
 
-  datosPagina.forEach((palabra) => {
+  datosPagina.forEach((palabra, i) => {
     const truncarConTooltip = (texto, maxLen = 100) => {
       if (!texto) return "";
       if (texto.length <= maxLen) return texto;
@@ -112,6 +112,8 @@ function renderizarTabla() {
 
     const fila = document.createElement("tr");
 
+    const indexGlobal = palabrasCache.indexOf(palabra);
+
     fila.innerHTML = `
       <td class="sticky-col">${palabra.reo}</td>
       <td>${palabra.espanol}</td>
@@ -133,7 +135,7 @@ function renderizarTabla() {
         }
       </td>
       <td class="acciones">
-        <button onclick='editar(${JSON.stringify(palabra)})'>✏️</button>
+        <button onclick='editarDesdeIndice(${indexGlobal})'>✏️</button>
         <button onclick='eliminar("${palabra.id}")'>🗑️</button>
       </td>
     `;
@@ -147,6 +149,7 @@ function renderizarTabla() {
 
   renderizarPaginacion();
 }
+
 
 function renderizarPaginacion() {
   const totalPaginas = Math.ceil(palabrasCache.length / TAMANIO_PAGINA);

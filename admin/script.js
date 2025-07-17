@@ -221,15 +221,17 @@ async function subirImagenSeleccionada() {
       .replace(/\s+/g, "_").replace(/[^\w.\-]/g, "").toLowerCase();
     const nombreFinal = `img_${timestamp}_${nombreArchivo}`;
 
-    const formData = new FormData();
-    formData.append("accion", "subirImagen");
-    formData.append("nombre", nombreFinal);
-    formData.append("base64", base64);
+    const params = new URLSearchParams();
+      params.append("accion", "subirImagen");
+      params.append("nombre", nombreFinal);
+      params.append("base64", base64);
 
-    const resp = await fetch(URL_BASE, {
-      method: "POST",
-      body: formData // Sin headers → evita preflight
-    });
+   const resp = await fetch(URL_BASE, {
+        method: "POST",
+     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+     body: params.toString()
+   });
+
 
     const data = await resp.json();
     if (data.ok && data.url) {

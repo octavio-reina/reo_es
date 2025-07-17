@@ -25,21 +25,23 @@
         <button class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
         <button class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
       </nav>
-     <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
-    <div id="estado"></div>
-    <div id="error"></div>
-  <input
-  type="text"
-  id="busqueda"
-  class="oculto"
-  placeholder="Buscar..."
-  oninput="filtrarTabla()"
-  autocomplete="off"
-/>
+      <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
+      <div id="estado"></div>
+      <div id="error"></div>
+      <input
+        type="text"
+        id="busqueda"
+        class="oculto"
+        placeholder="Buscar..."
+        oninput="filtrarTabla()"
+        autocomplete="off"
+      />
     </header>
+
     <!-- Sección Agregar -->
     <div id="agregar">
       <h2 id="titulo-form">Agregar nueva palabra</h2>
+
       <input type="text" id="reo" placeholder="Reo Tahiti" autocomplete="off" />
       <input type="text" id="espanol" placeholder="Español" autocomplete="off" />
 
@@ -61,9 +63,25 @@
       <div id="contenedor-enlaces"></div>
       <button type="button" onclick="agregarCampoEnlace()">+ Agregar enlace</button>
 
+      <hr />
+
       <!-- Carga de imagen -->
-      <br>
-      <label for="imagen-url">Imagen (URL externa, opcional):</label>
+      <div class="carga-imagen">
+        <label for="imagen-file">Subir imagen desde tu dispositivo:</label><br>
+        <input type="file" id="imagen-file" accept="image/*" />
+
+        <button type="button" id="btn-subir-imagen" onclick="subirImagenSeleccionada()">Subir al repositorio</button>
+
+        <div id="imagen-upload-estado" class="msg-subida"></div>
+
+        <div class="imagen-preview-wrapper oculta" id="imagen-preview-wrapper">
+          <p>Vista previa:</p>
+          <img id="imagen-preview" src="" alt="Vista previa" style="max-width:200px;max-height:200px;"/>
+        </div>
+      </div>
+
+      <!-- Campo de URL (rellenado tras subir, pero editable) -->
+      <label for="imagen-url">Imagen (URL externa o subida):</label>
       <input type="url" id="imagen-url" placeholder="https://..." autocomplete="off" />
 
       <button onclick="handleGuardar(this)">Guardar</button>
@@ -71,7 +89,6 @@
 
     <!-- Sección Gestionar -->
     <div id="gestionar" class="oculto">
-
       <div class="tabla-contenedor">
         <table id="tabla">
           <thead>

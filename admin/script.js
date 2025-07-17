@@ -20,6 +20,11 @@ function verificarClave() {
   }
 }
 
+function cerrarSesion() {
+  localStorage.removeItem("claveValida");
+  location.reload();
+}
+
 function mostrarAdmin() {
   document.getElementById("clave").classList.add("oculto");
   document.getElementById("admin").classList.remove("oculto");
@@ -71,7 +76,7 @@ function cargarTabla() {
     });
 }
 
-function guardar() {
+async function guardar() {
   clearMensajes();
 
   const reo = document.getElementById("reo").value.trim();
@@ -90,30 +95,61 @@ function guardar() {
     if (url) enlaces.push({ url, texto });
   });
 
-  if (!reo || !espanol) return mostrarError("Reo Tahiti y Español son obligatorios.");
+  // ✅ Validación básica
+  if (!reo || !espanol) {
+    return mostrarError("Reo Tahiti y Español son obligatorios.");
+  }
 
+  // ✅ Validación de duplicados (solo si no estamos editando)
+  if (!editandoID && Array.isArray(palabrasOriginales) && palabrasOriginales.length) {
+    const dup = palabrasOriginales.find(
+      p =>
+        p.reo.trim().toLowerCase() === reo.toLowerCase() ||
+        p.espanol.trim().toLowerCase() === espanol.toLowerCase()
+    );
+    if (dup) {
+      const confirmar = confirm(
+        `¡Atención! Ya existe una palabra parecida:\n\n` +
+        `Reo Tahiti: ${dup.reo}\nEspañol: ${dup.espanol}\n\n` +
+        `¿Deseas agregarla de todas formas?\nAceptar: Agregar\nCancelar: Editar la palabra existente`
+      );
+      if (!confirmar) {
+        editar(dup);
+        return;
+      }
+    }
+  }
+
+  // ✅ Generar ID
   const id = editandoID || `reo.id.${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
+  // ✅ Construir parámetros
   const params = new URLSearchParams({
     accion: editandoID ? "editar" : "agregar",
-    id, reo, espanol,
-    categoria, notas, descripcion,
-    imagen,
+    id, reo, espanol, categoria, notas, descripcion, imagen,
     enlaces: JSON.stringify(enlaces)
   });
 
-  fetch(`${URL_BASE}?${params.toString()}`)
-    .then(res => res.json())
-    .then(resp => {
-      if (resp.ok) {
-        mostrarEstado(editandoID ? "✅ Palabra actualizada" : "✅ Palabra agregada");
-        limpiarFormulario();
-        cargarTabla();
-      } else {
-        mostrarError("❌ Error: " + (resp.error || "Desconocido"));
-      }
-    })
-    .catch(() => mostrarError("❌ Error al guardar."));
+  try {
+    const res = await fetch(`${URL_BASE}?${params.toString()}`);
+    const resp = await res.json();
+
+    if (resp.ok) {
+      mostrarEstado(editandoID ? "✅ Palabra actualizada" : "✅ Palabra agregada");
+      limpiarFormulario();
+      cargarTabla();
+    } else {
+      mostrarError("❌ Error: " + (resp.error || "Desconocido"));
+    }
+  } catch (e) {
+    mostrarError("❌ Error al guardar.");
+  }
+}
+
+function handleGuardar(btn) {
+  btn.classList.add("active-click");
+  setTimeout(() => btn.classList.remove("active-click"), 300);
+  guardar();
 }
 
 function eliminar(id) {
@@ -208,9 +244,6 @@ function convertirArchivoBase64(archivo) {
   });
 }
 
-/* ===========================
-   Otros helpers (paginación, enlaces, categorías, etc.)
-   =========================== */
 /* ===========================
    Mensajes de estado / error
    =========================== */
@@ -318,6 +351,11 @@ function editar(palabra) {
   clearMensajes();
 }
 
+function editarDesdeIndice(indice) {
+  const palabra = palabrasCache[indice];
+  if (palabra) editar(palabra);
+}
+
 function mostrarInputCategoria() {
   const select = document.getElementById("categoria-select");
   const inputNueva = document.getElementById("categoria-nueva");
@@ -360,6 +398,138 @@ function limpiarFormulario() {
   editandoID = null;
 }
 
+
+function cargarCategorias() {
+  const select = document.getElementById("categoria-select");
+  select.innerHTML = '<option value="">Selecciona categoría</option>';
+  const categorias = [
+    ...new Set(
+      palabrasCache
+        .map((p) => p.categoria && p.categoria.trim())
+        .filter((c) => c && c !== "")
+    ),
+  ].sort();
+  categorias.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    select.appendChild(opt);
+  });
+  const optOtra = document.createElement("option");
+  optOtra.value = "otra";
+  optOtra.textContent = "Otra...";
+  select.appendChild(optOtra);
+  mostrarInputCategoria();
+}
+
+function renderizarTabla() {
+  const tbody = document.querySelector(“#tabla tbody”);
+  tbody.innerHTML = “”;
+
+  const inicio = (paginaActual - 1) * TAMANIO_PAGINA;
+  const fin = inicio + TAMANIO_PAGINA;
+  const datosPagina = palabrasCache.slice(inicio, fin);
+
+  datosPagina.forEach((palabra, i) => {
+    const truncarConTooltip = (texto, maxLen = 100) => {
+      if (!texto) return “”;
+      if (texto.length <= maxLen) return texto;
+      const corto = texto.substring(0, maxLen) + “...“;
+      return `<span title=“${texto.replace(/“/g, “&quot;“)}“>${corto}</span>`;
+    };
+
+    const enlaces = (() => {
+      try {
+        return JSON.parse(palabra.enlaces || “[]“);
+      } catch {
+        return [];
+      }
+    })();
+
+    const mostrarEnlaces = () => {
+      const ventana = window.open(“”, “_blank”, “width=400,height=300,scrollbars=yes”);
+      const htmlEnlaces = enlaces
+        .map(
+          (enlace) =>
+            `<li><a href=“${enlace.url}” target=“_blank” rel=“noopener noreferrer”>${enlace.texto || enlace.url}</a></li>`
+        )
+        .join(“”);
+      ventana.document.write(`
+        <html><head><title>Enlaces de referencia</title></head><body>
+        <h2>Enlaces para “${palabra.reo}“</h2>
+        <ul>${htmlEnlaces}</ul>
+        <button onclick=“window.close()“>Cerrar</button>
+        </body></html>
+      `);
+      ventana.document.close();
+    };
+
+    const fila = document.createElement(“tr”);
+
+    const indexGlobal = palabrasCache.indexOf(palabra);
+
+    fila.innerHTML = `
+      <td class=“sticky-col”>${palabra.reo}</td>
+      <td>${palabra.espanol}</td>
+      <td>${palabra.categoria || “”}</td>
+      <td>${truncarConTooltip(palabra.notas)}</td>
+      <td>${truncarConTooltip(palabra.descripcion)}</td>
+      <td>
+        ${
+          palabra.imagen
+            ? `<img src=“${palabra.imagen}” alt=“Imagen de ${palabra.reo}” class=“miniatura” loading=“lazy” width=“200" height=“200” />`
+            : “—”
+        }
+      </td>
+      <td>
+        ${
+          enlaces.length > 0
+            ? `<button class=“ver-enlaces”>Ver enlaces</button>`
+            : “—”
+        }
+      </td>
+      <td class=“acciones”>
+        <button onclick=‘editarDesdeIndice(${indexGlobal})’>:pencil2:</button>
+        <button onclick=‘eliminar(“${palabra.id}“)‘>:wastebasket:</button>
+      </td>
+    `;
+
+    if (enlaces.length > 0) {
+      fila.querySelector(“.ver-enlaces”).addEventListener(“click”, mostrarEnlaces);
+    }
+
+    tbody.appendChild(fila);
+  });
+
+  renderizarPaginacion();
+}
+
+
+
+
+
+function transformarLinkImagen(url) {
+  if (!url) return "";
+
+  url = url.trim();
+
+  // Si es link directo a imagen
+  const extensiones = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
+  if (extensiones.some(ext => url.toLowerCase().includes(ext))) {
+    return url;
+  }
+
+  // Si es link de Google Drive
+  if (url.includes("drive.google.com")) {
+    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+    if (match && match[1]) {
+      const fileId = match[1];
+      return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+  }
+
+  return url; // Devuelve el original si no se puede transformar
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("claveValida") === "true") mostrarAdmin();

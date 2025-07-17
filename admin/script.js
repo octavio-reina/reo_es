@@ -1,5 +1,5 @@
 const CLAVE_SECRETA = "maitaimaitai";
-const URL_BASE = "https://script.google.com/macros/s/AKfycbwi64Jq8Gg57A6mpbK61R2PllNbRcboGLMLKmIejob69MTI9FLhx3FQpPyvPZz4VMEf/exec";
+const URL_BASE = "https://script.google.com/macros/s/AKfycbyc38XWT72cG6-g4sF3gbEeHG5DFH7i3GLrFjERrRjOr6qpMWBY54epf_nfv-y2YgMP/exec";
 
 let editandoID = null;
 let palabrasCache = [];
@@ -446,7 +446,7 @@ function cerrarSesion() {
   location.reload();
 }
 
-// SUBIDA DE IMÁGENES A GITHUB
+// SUBIDA DE IMÁGENES A GITHUB (via Apps Script doPost)
 async function subirImagenSeleccionada() {
   clearMensajes();
 
@@ -475,11 +475,11 @@ async function subirImagenSeleccionada() {
     return;
   }
 
-  // Mostrar vista previa
+  // Mostrar vista previa local inmediata
   const readerPreview = new FileReader();
   readerPreview.onload = (e) => {
     previewImg.src = e.target.result;
-    previewWrapper.classList.remove("oculta");
+    previewWrapper.classList.remove("oculto");  // asegúrate de usar .oculto no .oculta
   };
   readerPreview.readAsDataURL(archivo);
 
@@ -491,7 +491,7 @@ async function subirImagenSeleccionada() {
   estadoDiv.style.color = "#333";
 
   try {
-    // Convertir a Base64
+    // Convertir a Base64 (sin encabezado)
     const base64 = await convertirArchivoBase64(archivo);
 
     // Generar nombre de archivo seguro con prefijo img_
@@ -501,23 +501,30 @@ async function subirImagenSeleccionada() {
       .replace(/\s+/g, "_")
       .replace(/[^\w.\-]/g, "")
       .toLowerCase();
-
     const nombreFinal = `img_${timestamp}_${nombreArchivo}`;
 
-    // Enviar a Apps Script
+    // Construir payload para Apps Script
+    const payload = {
+      accion: "subirImagen",
+      nombre: nombreFinal,
+      base64: base64,      // compat: frontend
+      contenido: base64    // compat: backend
+    };
+
     const respuesta = await fetch(URL_BASE, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        accion: "subirImagen",
-        nombre: nombreFinal,
-        base64: base64
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
     });
 
-    const data = await respuesta.json();
+    let data;
+    try {
+      data = await respuesta.json();
+    } catch {
+      const txt = await respuesta.text();
+      console.error("Respuesta no JSON:", txt);
+      throw new Error("Respuesta no válida del servidor.");
+    }
 
     if (data.ok && data.url) {
       estadoDiv.textContent = "✅ Imagen subida correctamente.";
@@ -525,9 +532,13 @@ async function subirImagenSeleccionada() {
 
       // Poner la URL en el input de imagen
       document.getElementById("imagen-url").value = data.url;
+
+      // actualizar preview a la URL real de GitHub (por si recargas)
+      previewImg.src = data.url;
+      previewWrapper.classList.remove("oculto");
     } else {
       console.error("Respuesta Apps Script:", data);
-      estadoDiv.textContent = "❌ Error al subir la imagen.";
+      estadoDiv.textContent = "❌ Error al subir la imagen: " + (data.error || "");
       estadoDiv.style.color = "red";
     }
   } catch (error) {
@@ -539,6 +550,7 @@ async function subirImagenSeleccionada() {
     boton.textContent = "Subir Imagen";
   }
 }
+
 
 function convertirArchivoBase64(archivo) {
   return new Promise((resolve, reject) => {

@@ -446,6 +446,113 @@ function cerrarSesion() {
   location.reload();
 }
 
+// SUBIDA DE IMÁGENES A GITHUB
+async function subirImagenSeleccionada() {
+  clearMensajes();
+
+  const fileInput = document.getElementById("imagen-file");
+  const estadoDiv = document.getElementById("imagen-upload-estado");
+  const previewWrapper = document.getElementById("imagen-preview-wrapper");
+  const previewImg = document.getElementById("imagen-preview");
+  const boton = document.getElementById("btn-subir-imagen");
+
+  if (!fileInput.files.length) {
+    mostrarError("Selecciona un archivo antes de subir.");
+    return;
+  }
+
+  const archivo = fileInput.files[0];
+
+  // Validación básica: tipo imagen
+  if (!archivo.type.startsWith("image/")) {
+    mostrarError("Solo se permiten archivos de imagen.");
+    return;
+  }
+
+  // Validación tamaño máximo 2 MB
+  if (archivo.size > 2 * 1024 * 1024) {
+    mostrarError("El archivo no debe superar 2MB.");
+    return;
+  }
+
+  // Mostrar vista previa
+  const readerPreview = new FileReader();
+  readerPreview.onload = (e) => {
+    previewImg.src = e.target.result;
+    previewWrapper.classList.remove("oculta");
+  };
+  readerPreview.readAsDataURL(archivo);
+
+  // Mostrar loading en botón
+  boton.disabled = true;
+  boton.textContent = "Subiendo...";
+
+  estadoDiv.textContent = "Subiendo imagen al repositorio...";
+  estadoDiv.style.color = "#333";
+
+  try {
+    // Convertir a Base64
+    const base64 = await convertirArchivoBase64(archivo);
+
+    // Generar nombre de archivo seguro con prefijo img_
+    const timestamp = Date.now();
+    const nombreArchivo = archivo.name
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "_")
+      .replace(/[^\w.\-]/g, "")
+      .toLowerCase();
+
+    const nombreFinal = `img_${timestamp}_${nombreArchivo}`;
+
+    // Enviar a Apps Script
+    const respuesta = await fetch(URL_BASE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        accion: "subirImagen",
+        nombre: nombreFinal,
+        base64: base64
+      })
+    });
+
+    const data = await respuesta.json();
+
+    if (data.ok && data.url) {
+      estadoDiv.textContent = "✅ Imagen subida correctamente.";
+      estadoDiv.style.color = "green";
+
+      // Poner la URL en el input de imagen
+      document.getElementById("imagen-url").value = data.url;
+    } else {
+      console.error("Respuesta Apps Script:", data);
+      estadoDiv.textContent = "❌ Error al subir la imagen.";
+      estadoDiv.style.color = "red";
+    }
+  } catch (error) {
+    console.error(error);
+    estadoDiv.textContent = "❌ Error en el proceso de subida.";
+    estadoDiv.style.color = "red";
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Subir Imagen";
+  }
+}
+
+function convertirArchivoBase64(archivo) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(",")[1]; // quitar encabezado data:
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(archivo);
+  });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("claveValida") === "true") {
     mostrarAdmin();

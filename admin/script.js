@@ -211,7 +211,155 @@ function convertirArchivoBase64(archivo) {
 /* ===========================
    Otros helpers (paginación, enlaces, categorías, etc.)
    =========================== */
-// ... (mantén tus funciones actuales: renderizarTabla, paginación, filtrarTabla, etc.)
+/* ===========================
+   Mensajes de estado / error
+   =========================== */
+let cuentaRegresivaTimeout;
+
+function mostrarEstado(mensaje) {
+  clearMensajes();
+  const estado = document.getElementById("estado");
+  let segundos = 5;
+  estado.textContent = `${mensaje} (${segundos})`;
+  estado.classList.add("visible");
+
+  cuentaRegresivaTimeout = setInterval(() => {
+    segundos--;
+    if (segundos > 0) {
+      estado.textContent = `${mensaje} (${segundos})`;
+    } else {
+      clearInterval(cuentaRegresivaTimeout);
+      estado.textContent = "";
+      estado.classList.remove("visible");
+    }
+  }, 1000);
+}
+
+function mostrarError(mensaje) {
+  clearMensajes();
+  const error = document.getElementById("error");
+  error.textContent = mensaje;
+  error.classList.add("visible");
+  setTimeout(() => {
+    error.textContent = "";
+    error.classList.remove("visible");
+  }, 7000);
+}
+
+function clearMensajes() {
+  clearInterval(cuentaRegresivaTimeout);
+  document.getElementById("estado").textContent = "";
+  document.getElementById("estado").classList.remove("visible");
+  document.getElementById("error").textContent = "";
+  document.getElementById("error").classList.remove("visible");
+}
+
+function renderizarPaginacion() {
+  const totalPaginas = Math.ceil(palabrasCache.length / TAMANIO_PAGINA);
+  const contenedor = document.getElementById("paginacion");
+  contenedor.innerHTML = "";
+  if (totalPaginas <= 1) return;
+
+  for (let i = 1; i <= totalPaginas; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === paginaActual) btn.classList.add("active");
+    btn.onclick = () => {
+      paginaActual = i;
+      renderizarTabla();
+    };
+    contenedor.appendChild(btn);
+  }
+}
+
+function filtrarTabla() {
+  const query = document.getElementById("busqueda").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (!query) {
+    palabrasCache = [...palabrasOriginales];
+  } else {
+    palabrasCache = palabrasOriginales.filter(p => {
+      const normalizar = (txt) =>
+        (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+      return (
+        normalizar(p.reo).includes(query) ||
+        normalizar(p.espanol).includes(query) ||
+        normalizar(p.categoria).includes(query) ||
+        normalizar(p.notas).includes(query) ||
+        normalizar(p.descripcion).includes(query)
+      );
+    });
+  }
+  paginaActual = 1;
+  renderizarTabla();
+}
+
+function editar(palabra) {
+  document.getElementById("reo").value = palabra.reo;
+  document.getElementById("espanol").value = palabra.espanol;
+  document.getElementById("categoria-select").value = palabra.categoria || "";
+  mostrarInputCategoria();
+  document.getElementById("categoria-nueva").value = "";
+  document.getElementById("notas").value = palabra.notas || "";
+  document.getElementById("descripcion").value = palabra.descripcion || "";
+  document.getElementById("imagen-url").value = palabra.imagen || "";
+
+  limpiarCamposEnlaces();
+  try {
+    const enlaces = JSON.parse(palabra.enlaces || "[]");
+    enlaces.forEach(link => agregarCampoEnlace(link.url, link.texto));
+  } catch {
+    agregarCampoEnlace();
+  }
+
+  editandoID = palabra.id;
+  mostrarSeccion("agregar");
+  document.getElementById("titulo-form").textContent = `Editando: "${palabra.reo}" (${palabra.espanol})`;
+  clearMensajes();
+}
+
+function mostrarInputCategoria() {
+  const select = document.getElementById("categoria-select");
+  const inputNueva = document.getElementById("categoria-nueva");
+  if (select.value === "otra") {
+    inputNueva.classList.remove("oculto");
+  } else {
+    inputNueva.classList.add("oculto");
+    inputNueva.value = "";
+  }
+}
+
+function limpiarCamposEnlaces() {
+  document.getElementById("contenedor-enlaces").innerHTML = "";
+  agregarCampoEnlace();
+}
+
+function agregarCampoEnlace(url = "", texto = "") {
+  const contenedor = document.getElementById("contenedor-enlaces");
+  const grupo = document.createElement("div");
+  grupo.className = "campo-enlace";
+  grupo.innerHTML = `
+    <input type="text" class="input-url" placeholder="URL" value="${url}" />
+    <input type="text" class="input-texto" placeholder="Texto del enlace" value="${texto}" />
+    <button onclick="this.parentNode.remove()">❌</button>
+  `;
+  contenedor.appendChild(grupo);
+}
+
+function limpiarFormulario() {
+  document.getElementById("reo").value = "";
+  document.getElementById("espanol").value = "";
+  document.getElementById("categoria-select").value = "";
+  document.getElementById("categoria-nueva").value = "";
+  document.getElementById("categoria-nueva").classList.add("oculto");
+  document.getElementById("notas").value = "";
+  document.getElementById("descripcion").value = "";
+  document.getElementById("imagen-url").value = "";
+  limpiarCamposEnlaces();
+  document.getElementById("titulo-form").textContent = "Agregar nueva palabra";
+  editandoID = null;
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.getItem("claveValida") === "true") mostrarAdmin();

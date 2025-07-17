@@ -505,8 +505,8 @@ function renderizarTabla() {
         }
       </td>
       <td class="acciones">
-        <button onclick='editarDesdeIndice(${indexGlobal})'>:pencil2:</button>
-        <button onclick='eliminar("${palabra.id}")'>:wastebasket:</button>
+        <button onclick='editarDesdeIndice(${indexGlobal})'>✏️</button>
+        <button onclick='eliminar("${palabra.id}")'>🗑️</button>
       </td>
     `;
 

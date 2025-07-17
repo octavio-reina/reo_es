@@ -56,16 +56,31 @@ function mostrarSeccion(seccion) {
 function cargarTabla() {
   fetch(URL_BASE + "?accion=leer")
     .then(res => res.json())
-    .then(data => {
-      data.forEach(p => {
+    .then(response => {
+      console.log("Respuesta del backend:", response);
+
+      const lista = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response)
+        ? response
+        : [];
+
+      if (!lista.length) {
+        mostrarError("No se encontraron datos válidos.");
+        return;
+      }
+
+      lista.forEach(p => {
         if (!p.id) {
           p.id = `reo.id.${Date.now()}_${Math.floor(Math.random() * 1000)}`;
         }
       });
-      palabrasOriginales = [...data].sort((a, b) =>
+
+      palabrasOriginales = [...lista].sort((a, b) =>
         a.reo.localeCompare(b.reo, "es", { sensitivity: "base" })
       );
       palabrasCache = [...palabrasOriginales];
+
       cargarCategorias();
       paginaActual = 1;
       renderizarTabla();
@@ -75,6 +90,7 @@ function cargarTabla() {
       console.error(err);
     });
 }
+
 
 async function guardar() {
   clearMensajes();
@@ -423,8 +439,8 @@ function cargarCategorias() {
 }
 
 function renderizarTabla() {
-  const tbody = document.querySelector(“#tabla tbody”);
-  tbody.innerHTML = “”;
+  const tbody = document.querySelector("#tabla tbody");
+  tbody.innerHTML = "";
 
   const inicio = (paginaActual - 1) * TAMANIO_PAGINA;
   const fin = inicio + TAMANIO_PAGINA;
@@ -432,70 +448,70 @@ function renderizarTabla() {
 
   datosPagina.forEach((palabra, i) => {
     const truncarConTooltip = (texto, maxLen = 100) => {
-      if (!texto) return “”;
+      if (!texto) return "";
       if (texto.length <= maxLen) return texto;
-      const corto = texto.substring(0, maxLen) + “...“;
-      return `<span title=“${texto.replace(/“/g, “&quot;“)}“>${corto}</span>`;
+      const corto = texto.substring(0, maxLen) + "...";
+      return `<span title="${texto.replace(/"/g, "&quot;")}">${corto}</span>`;
     };
 
     const enlaces = (() => {
       try {
-        return JSON.parse(palabra.enlaces || “[]“);
+        return JSON.parse(palabra.enlaces || "[]");
       } catch {
         return [];
       }
     })();
 
     const mostrarEnlaces = () => {
-      const ventana = window.open(“”, “_blank”, “width=400,height=300,scrollbars=yes”);
+      const ventana = window.open("", "_blank", "width=400,height=300,scrollbars=yes");
       const htmlEnlaces = enlaces
         .map(
           (enlace) =>
-            `<li><a href=“${enlace.url}” target=“_blank” rel=“noopener noreferrer”>${enlace.texto || enlace.url}</a></li>`
+            `<li><a href="${enlace.url}" target="_blank" rel="noopener noreferrer">${enlace.texto || enlace.url}</a></li>`
         )
-        .join(“”);
+        .join("");
       ventana.document.write(`
         <html><head><title>Enlaces de referencia</title></head><body>
-        <h2>Enlaces para “${palabra.reo}“</h2>
+        <h2>Enlaces para "${palabra.reo}"</h2>
         <ul>${htmlEnlaces}</ul>
-        <button onclick=“window.close()“>Cerrar</button>
+        <button onclick="window.close()">Cerrar</button>
         </body></html>
       `);
       ventana.document.close();
     };
 
-    const fila = document.createElement(“tr”);
+    const fila = document.createElement("tr");
 
     const indexGlobal = palabrasCache.indexOf(palabra);
 
     fila.innerHTML = `
-      <td class=“sticky-col”>${palabra.reo}</td>
+      <td class="sticky-col">${palabra.reo}</td>
       <td>${palabra.espanol}</td>
-      <td>${palabra.categoria || “”}</td>
+      <td>${palabra.categoria || ""}</td>
       <td>${truncarConTooltip(palabra.notas)}</td>
       <td>${truncarConTooltip(palabra.descripcion)}</td>
       <td>
         ${
           palabra.imagen
-            ? `<img src=“${palabra.imagen}” alt=“Imagen de ${palabra.reo}” class=“miniatura” loading=“lazy” width=“200" height=“200” />`
-            : “—”
+            ? `<img src="${palabra.imagen}" alt="Imagen de ${palabra.reo}" class="miniatura" loading="lazy" width="200" height="200" />`
+            : "—"
         }
       </td>
       <td>
         ${
           enlaces.length > 0
-            ? `<button class=“ver-enlaces”>Ver enlaces</button>`
-            : “—”
+            ? `<button class="ver-enlaces">Ver enlaces</button>`
+            : "—"
         }
       </td>
-      <td class=“acciones”>
-        <button onclick=‘editarDesdeIndice(${indexGlobal})’>:pencil2:</button>
-        <button onclick=‘eliminar(“${palabra.id}“)‘>:wastebasket:</button>
+      <td class="acciones">
+        <button onclick='editarDesdeIndice(${indexGlobal})'>:pencil2:</button>
+        <button onclick='eliminar("${palabra.id}")'>:wastebasket:</button>
       </td>
     `;
 
     if (enlaces.length > 0) {
-      fila.querySelector(“.ver-enlaces”).addEventListener(“click”, mostrarEnlaces);
+      fila.querySelector(".ver-enlaces").addEventListener("click", mostrarEnlaces);
     }
 
     tbody.appendChild(fila);

@@ -7,14 +7,22 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="/reo_es/icon-256.png" sizes="256x256" />
   <link rel="apple-touch-icon" href="/reo_es/icon-512.png" />
+  <style>
+    /* Opcional: estilo para ocultar elementos */
+    .oculto { display: none; }
+    .miniatura { max-width: 200px; max-height: 200px; object-fit: contain; }
+    .sticky-col { position: sticky; left: 0; background: white; z-index: 1; }
+    .acciones button { margin: 0 3px; cursor: pointer; }
+    .msg-subida { margin-top: 0.5em; font-weight: bold; }
+  </style>
 </head>
 <body>
 
   <!-- Sección de clave (visible al inicio) -->
   <div id="clave">
     <p>Ingresa la clave secreta para continuar:</p>
-    <input type="password" id="codigo" placeholder="Clave secreta" />
-    <button onclick="verificarClave()">Entrar</button>
+    <input type="password" id="codigo" placeholder="Clave secreta" autocomplete="off" />
+    <button type="button" onclick="verificarClave()">Entrar</button>
   </div>
 
   <!-- Sección admin (oculta hasta pasar clave) -->
@@ -22,12 +30,12 @@
     <header class="sticky-header">
       <h1>Administrador</h1>
       <nav>
-        <button class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
-        <button class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
+        <button type="button" class="tab-btn active" onclick="mostrarSeccion('agregar')">Agregar</button>
+        <button type="button" class="tab-btn" onclick="mostrarSeccion('gestionar')">Gestionar</button>
       </nav>
-      <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
-      <div id="estado"></div>
-      <div id="error"></div>
+      <button type="button" class="btn-salir" onclick="cerrarSesion()">Salir</button>
+      <div id="estado" aria-live="polite" role="status"></div>
+      <div id="error" aria-live="assertive" role="alert"></div>
       <input
         type="text"
         id="busqueda"
@@ -35,17 +43,30 @@
         placeholder="Buscar..."
         oninput="filtrarTabla()"
         autocomplete="off"
+        aria-label="Buscar palabras"
       />
     </header>
 
     <!-- Sección Agregar -->
-    <div id="agregar">
+    <section id="agregar">
       <h2 id="titulo-form">Agregar nueva palabra</h2>
 
-      <input type="text" id="reo" placeholder="Reo Tahiti" autocomplete="off" />
-      <input type="text" id="espanol" placeholder="Español" autocomplete="off" />
+      <input
+        type="text"
+        id="reo"
+        placeholder="Reo Tahiti"
+        autocomplete="off"
+        aria-label="Palabra en Reo Tahiti"
+      />
+      <input
+        type="text"
+        id="espanol"
+        placeholder="Español"
+        autocomplete="off"
+        aria-label="Traducción al Español"
+      />
 
-      <select id="categoria-select" onchange="mostrarInputCategoria()">
+      <select id="categoria-select" onchange="mostrarInputCategoria()" aria-label="Seleccionar categoría">
         <option value="">Selecciona categoría</option>
       </select>
       <input
@@ -53,62 +74,101 @@
         class="oculto"
         placeholder="Nueva categoría"
         autocomplete="off"
+        aria-label="Nueva categoría"
       />
 
-      <textarea id="notas" placeholder="Notas (opcional)" rows="2"></textarea>
-      <textarea id="descripcion" placeholder="Descripción larga (opcional)" rows="3"></textarea>
+      <textarea
+        id="notas"
+        placeholder="Notas (opcional)"
+        rows="2"
+        aria-label="Notas adicionales"
+      ></textarea>
+      <textarea
+        id="descripcion"
+        placeholder="Descripción larga (opcional)"
+        rows="3"
+        aria-label="Descripción"
+      ></textarea>
 
       <!-- Enlaces dinámicos -->
       <label>Enlaces de referencia (opcional):</label>
-      <div id="contenedor-enlaces"></div>
-      <button type="button" onclick="agregarCampoEnlace()">+ Agregar enlace</button>
+      <div id="contenedor-enlaces" aria-live="polite"></div>
+      <button type="button" onclick="agregarCampoEnlace()" aria-label="Agregar nuevo enlace">+ Agregar enlace</button>
 
       <hr />
 
       <!-- Carga de imagen -->
       <div class="carga-imagen">
-        <label for="imagen-file">Subir imagen desde tu dispositivo:</label><br>
-        <input type="file" id="imagen-file" accept="image/*" />
+        <label for="imagen-file">Subir imagen desde tu dispositivo:</label><br />
+        <input
+          type="file"
+          id="imagen-file"
+          accept="image/*"
+          aria-describedby="imagen-upload-estado"
+        />
 
-        <button type="button" id="btn-subir-imagen" onclick="subirImagenSeleccionada()">Subir al repositorio</button>
+        <button
+          type="button"
+          id="btn-subir-imagen"
+          onclick="subirImagenSeleccionada()"
+          aria-live="polite"
+          aria-busy="false"
+        >
+          Subir al repositorio
+        </button>
 
-        <div id="imagen-upload-estado" class="msg-subida"></div>
+        <div id="imagen-upload-estado" class="msg-subida" role="status" aria-live="polite"></div>
 
-        <div class="imagen-preview-wrapper oculta" id="imagen-preview-wrapper">
+        <div
+          class="imagen-preview-wrapper oculto"
+          id="imagen-preview-wrapper"
+          aria-label="Vista previa de imagen"
+        >
           <p>Vista previa:</p>
-          <img id="imagen-preview" src="" alt="Vista previa" style="max-width:200px;max-height:200px;"/>
+          <img
+            id="imagen-preview"
+            src=""
+            alt="Vista previa de la imagen seleccionada"
+            style="max-width:200px; max-height:200px;"
+          />
         </div>
       </div>
 
       <!-- Campo de URL (rellenado tras subir, pero editable) -->
       <label for="imagen-url">Imagen (URL externa o subida):</label>
-      <input type="url" id="imagen-url" placeholder="https://..." autocomplete="off" />
+      <input
+        type="url"
+        id="imagen-url"
+        placeholder="https://..."
+        autocomplete="off"
+        aria-label="URL de la imagen"
+      />
 
-      <button onclick="handleGuardar(this)">Guardar</button>
-    </div>
+      <button type="button" onclick="handleGuardar(this)">Guardar</button>
+    </section>
 
     <!-- Sección Gestionar -->
-    <div id="gestionar" class="oculto">
-      <div class="tabla-contenedor">
-        <table id="tabla">
+    <section id="gestionar" class="oculto">
+      <div class="tabla-contenedor" role="region" aria-label="Tabla de palabras">
+        <table id="tabla" role="table">
           <thead>
             <tr>
-              <th class="sticky-col">Reo Tahiti</th>
-              <th>Español</th>
-              <th>Categoría</th>
-              <th>Notas</th>
-              <th>Descripción</th>
-              <th>Imagen</th>
-              <th>Enlaces</th>
-              <th class="acciones">Acciones</th>
+              <th class="sticky-col" scope="col">Reo Tahiti</th>
+              <th scope="col">Español</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Notas</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Imagen</th>
+              <th scope="col">Enlaces</th>
+              <th class="acciones" scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
 
-      <div id="paginacion" class="paginacion"></div>
-    </div>
+      <nav id="paginacion" class="paginacion" aria-label="Paginación"></nav>
+    </section>
   </div>
 
   <script src="script.js"></script>

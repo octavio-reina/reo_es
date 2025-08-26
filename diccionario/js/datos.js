@@ -3,7 +3,7 @@ import { generarFiltros } from "./filtros.js";
 import { mostrarPalabras } from "./tarjeta.js";
 
 export const palabras = [];
-export const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_ykT7tdYfacb16eKygphFcMv3XMeuISx1LApPBT-g5M4GRKeae3f-WgyHDAWprMmdyQrxY7dYvl6c/pub?gid=0&single=true&output=csv";
+export const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_ykT7tdYfacb16eKygphFcMv3XMeuISx1LApPBT-g5M4GRKeae3f-WgyHDAWprMmdyQrxY7dYvl6c/pub?output=csv";
 
 export function cargarDatos() {
 
